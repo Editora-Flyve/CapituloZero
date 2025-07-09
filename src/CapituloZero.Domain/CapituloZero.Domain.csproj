@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\CapituloZero.SharedKernel\CapituloZero.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

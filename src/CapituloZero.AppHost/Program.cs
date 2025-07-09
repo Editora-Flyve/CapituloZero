@@ -1,10 +1,18 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var api = builder.AddProject<Projects.CapituloZero_Web_Api>("api");
+var postgres = builder.AddPostgres("postgres")
+                      .WithPgAdmin()
+                      .WithDataVolume(isReadOnly: false);
+
+var postgresdb = postgres.AddDatabase("postgresdb");
+
+var api = builder.AddProject<Projects.CapituloZero_Web_Api>("api")
+    .WithReference(postgresdb)
+    .WaitFor(postgresdb);
 
 builder.AddProject<Projects.CapituloZero_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithReference(api)
     .WaitFor(api);
 
-builder.Build().Run();
+await builder.Build().RunAsync().ConfigureAwait(false);
