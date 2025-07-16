@@ -1,12 +1,12 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var postgres = builder.AddPostgres("postgres")
+var postgresdb = builder.AddPostgres("postgres")
                       .WithPgAdmin()
-                      .WithDataVolume(isReadOnly: false);
-
-var postgresdb = postgres.AddDatabase("postgresdb");
+                      .WithDataVolume(isReadOnly: false)
+                      .AddDatabase("postgresdb");
 
 var api = builder.AddProject<Projects.CapituloZero_Web_Api>("api")
+    .WithEnvironment("ConnectionStrings__Database", postgresdb  )
     .WithReference(postgresdb)
     .WaitFor(postgresdb);
 

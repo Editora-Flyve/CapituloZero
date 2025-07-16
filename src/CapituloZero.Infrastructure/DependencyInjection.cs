@@ -41,7 +41,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        string? connectionString = configuration.GetConnectionString("postgresdb");
+        string? connectionString = configuration.GetConnectionString("database");
 
         services.AddDbContext<ApplicationDbContext>(
             options => options
