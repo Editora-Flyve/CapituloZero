@@ -34,6 +34,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.Application", "src\CapituloZero.Application\CapituloZero.Application.csproj", "{14F770BA-5868-4D25-8517-CA3FEB30E6E3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{344234D0-F8BC-48E8-8871-B7FEC711CF0A}"
+	ProjectSection(SolutionItems) = preProject
+		doc\architecture.md = doc\architecture.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +91,7 @@ Global
 		{AB4FF705-013F-4394-ADA2-159F0EA4C924} = {FFE9F5A5-C410-44CF-B66C-42FF12498438}
 		{3D1C9075-9DC6-4296-9578-17A34B42D398} = {FFE9F5A5-C410-44CF-B66C-42FF12498438}
 		{14F770BA-5868-4D25-8517-CA3FEB30E6E3} = {FFE9F5A5-C410-44CF-B66C-42FF12498438}
+		{344234D0-F8BC-48E8-8871-B7FEC711CF0A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89CEE123-5128-442B-8219-791EDEB04557}
