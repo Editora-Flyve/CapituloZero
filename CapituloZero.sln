@@ -39,6 +39,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{344234D0-F8B
 		doc\architecture.md = doc\architecture.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{752607B9-2E03-46C2-87A3-94DDCB4556B2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "copilot", "copilot", "{C005D4C0-BC57-4044-97F6-C6AB66310808}"
+	ProjectSection(SolutionItems) = preProject
+		.github\Beast.chatmode.md = .github\Beast.chatmode.md
+		.github\copilot-instructions.md = .github\copilot-instructions.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +100,8 @@ Global
 		{3D1C9075-9DC6-4296-9578-17A34B42D398} = {FFE9F5A5-C410-44CF-B66C-42FF12498438}
 		{14F770BA-5868-4D25-8517-CA3FEB30E6E3} = {FFE9F5A5-C410-44CF-B66C-42FF12498438}
 		{344234D0-F8BC-48E8-8871-B7FEC711CF0A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{752607B9-2E03-46C2-87A3-94DDCB4556B2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C005D4C0-BC57-4044-97F6-C6AB66310808} = {752607B9-2E03-46C2-87A3-94DDCB4556B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89CEE123-5128-442B-8219-791EDEB04557}

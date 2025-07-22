@@ -1,0 +1,91 @@
+---
+description: 'Guidelines for building C# applications'
+applyTo: '**/*.cs'
+---
+
+# C# Development
+
+## C# Instructions
+- Always use the latest version C#, currently C# 13 features.
+- Write clear and concise comments for each function.
+
+## General Instructions
+- Make only high confidence suggestions when reviewing code changes.
+- Write code with good maintainability practices, including comments on why certain design decisions were made.
+- Handle edge cases and write clear exception handling.
+- For libraries or external dependencies, mention their usage and purpose in comments.
+
+## Naming Conventions
+
+- Follow PascalCase for component names, method names, and public members.
+- Use camelCase for private fields and local variables.
+- Prefix interface names with "I" (e.g., IUserService).
+
+## Formatting
+
+- Apply code-formatting style defined in `.editorconfig`.
+- Prefer file-scoped namespace declarations and single-line using directives.
+- Insert a newline before the opening curly brace of any code block (e.g., after `if`, `for`, `while`, `foreach`, `using`, `try`, etc.).
+- Ensure that the final return statement of a method is on its own line.
+- Use pattern matching and switch expressions wherever possible.
+- Use `nameof` instead of string literals when referring to member names.
+- Ensure that XML doc comments are created for any public APIs. When applicable, include `<example>` and `<code>` documentation in the comments.
+
+## Project Setup and Structure
+
+- Guide users through creating a new .NET project with the appropriate templates.
+- Explain the purpose of each generated file and folder to build understanding of the project structure.
+- Demonstrate how to organize code using feature folders or domain-driven design principles.
+- Show proper separation of concerns with models, services, and data access layers.
+- Explain the Program.cs and configuration system in ASP.NET Core 9 including environment-specific settings.
+
+## Nullable Reference Types
+
+- Declare variables non-nullable, and check for `null` at entry points.
+- Always use `is null` or `is not null` instead of `== null` or `!= null`.
+- Trust the C# null annotations and don't add null checks when the type system says a value cannot be null.
+
+## Data Access Patterns
+
+- Guide the implementation of a data access layer using Entity Framework Core.
+- Explain different options (SQL Server, SQLite, In-Memory) for development and production.
+- Demonstrate repository pattern implementation and when it's beneficial.
+- Show how to implement database migrations and data seeding.
+- Explain efficient query patterns to avoid common performance issues.
+
+## Contexto do Projeto
+- Solução .NET 9, arquitetura modular, separação por camadas.
+- Front-end: Blazor Server (priorize Blazor sobre Razor Pages ou MVC).
+- API: Minimal API, endpoints modulares.
+- Camadas: Web (Blazor), Web.Api, Application, Domain, Infrastructure, ServiceDefaults, SharedKernel.
+
+## Diretrizes para Geração de Código
+- Sempre siga o padrão CQRS: comandos (escrita) e queries (leitura) separados.
+- Use Domain Events para eventos de negócio.
+- Handlers de comandos/queries devem ser decorados para validação (FluentValidation) e logging (Serilog).
+- Use injeção de dependências via métodos de extensão (`AddApplication`, `AddInfrastructure`, `AddPresentation`).
+- Para endpoints, implemente a interface `IEndpoint` e registre em `MapEndpoint`.
+- Para Blazor, crie componentes Razor em `/Components` e consuma APIs via HttpClient.
+- Use sempre async/await para operações I/O.
+- Use Result/Error para controle de fluxo de erro, exceções apenas para falhas inesperadas.
+- Siga as convenções de nomenclatura: `XxxCommandHandler`, `XxxQueryHandler`, endpoints por recurso/ação.
+- Sempre gere código testável e modular.
+- Priorize exemplos e respostas que usem Blazor Server e .NET 9.
+
+## Fluxo para Nova Feature
+1. Crie entidades/eventos no Domain.
+2. Crie comandos/queries, handlers e validadores no Application.
+3. Atualize DbContext/configuração na Infrastructure.
+4. Implemente endpoint na API.
+5. Crie componente Blazor para consumir/exibir dados.
+
+## Restrições
+- Não gere código para Razor Pages ou MVC, apenas Blazor Server.
+- Não utilize bibliotecas ou padrões que não estejam presentes no projeto.
+- Respeite a modularidade e separação de responsabilidades.
+
+## Exemplos
+- Para novos endpoints, siga o padrão dos arquivos em `Web.Api/Endpoints`.
+- Para novos componentes, siga o padrão dos arquivos em `Web/Components`.
+
+Estas instruções são para orientar o Copilot a gerar código e respostas consistentes com a arquitetura e padrões do CapituloZero.
