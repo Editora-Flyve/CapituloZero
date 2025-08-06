@@ -5,6 +5,7 @@ using CapituloZero.Domain.Todos;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
 using CapituloZero.Domain.Todos.Entities;
+using CapituloZero.Domain.Todos.Events;
 
 namespace CapituloZero.Application.Todos.Delete;
 

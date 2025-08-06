@@ -4,6 +4,8 @@ using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
+using CapituloZero.Domain.Users.Events;
+using CapituloZero.Domain.Users.Entities;
 
 namespace CapituloZero.Application.Users.Register;
 
