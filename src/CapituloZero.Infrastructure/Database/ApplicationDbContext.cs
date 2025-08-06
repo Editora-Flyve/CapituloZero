@@ -1,9 +1,9 @@
 ﻿using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Infrastructure.DomainEvents;
-using CapituloZero.Domain.Todos;
-using CapituloZero.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
+using CapituloZero.Domain.Todos.Entities;
+using CapituloZero.Domain.Users.Entities;
 
 namespace CapituloZero.Infrastructure.Database;
 

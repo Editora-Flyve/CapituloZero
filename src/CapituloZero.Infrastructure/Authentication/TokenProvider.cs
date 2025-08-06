@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Domain.Users;
+using CapituloZero.Domain.Users.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;

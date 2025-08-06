@@ -9,7 +9,7 @@ public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>
     private readonly List<IDomainEvent> _domainEvents = [];
 
     public List<IDomainEvent> DomainEvents => [.. _domainEvents];
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
 
     public void ClearDomainEvents()
     {

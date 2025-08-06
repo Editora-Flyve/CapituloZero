@@ -1,5 +1,5 @@
 ﻿using CapituloZero.Application.Abstractions.Messaging;
-using CapituloZero.Domain.Todos;
+using CapituloZero.Domain.Todos.Enums;
 
 namespace CapituloZero.Application.Todos.Create;
 

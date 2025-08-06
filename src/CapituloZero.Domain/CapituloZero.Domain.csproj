@@ -4,4 +4,8 @@
     <ProjectReference Include="..\CapituloZero.SharedKernel\CapituloZero.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Editora\Events\" />
+  </ItemGroup>
+
 </Project>

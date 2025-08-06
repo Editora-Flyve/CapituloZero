@@ -4,6 +4,7 @@ using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Domain.Todos;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
+using CapituloZero.Domain.Todos.Entities;
 
 namespace CapituloZero.Application.Todos.Delete;
 

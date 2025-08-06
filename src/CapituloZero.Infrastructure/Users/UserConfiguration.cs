@@ -1,4 +1,4 @@
-﻿using CapituloZero.Domain.Users;
+﻿using CapituloZero.Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

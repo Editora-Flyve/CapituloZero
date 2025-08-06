@@ -1,6 +1,6 @@
 ﻿using CapituloZero.SharedKernel;
 
-namespace CapituloZero.Domain.Users;
+namespace CapituloZero.Domain.Users.Entities;
 
 public sealed class User : Entity
 {

@@ -1,4 +1,4 @@
-﻿using CapituloZero.Domain.Users;
+﻿using CapituloZero.Domain.Users.Entities;
 
 namespace CapituloZero.Application.Abstractions.Authentication;
 

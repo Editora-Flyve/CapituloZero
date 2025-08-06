@@ -1,4 +1,4 @@
-﻿using CapituloZero.Domain.Users;
+﻿using CapituloZero.Domain.Users.Events;
 using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Application.Users.Register;

@@ -43,7 +43,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{7526
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "copilot", "copilot", "{C005D4C0-BC57-4044-97F6-C6AB66310808}"
 	ProjectSection(SolutionItems) = preProject
-		.github\Beast.chatmode.md = .github\Beast.chatmode.md
 		.github\copilot-instructions.md = .github\copilot-instructions.md
 	EndProjectSection
 EndProject

@@ -1,4 +1,4 @@
-﻿namespace CapituloZero.Domain.Todos;
+﻿namespace CapituloZero.Domain.Todos.Enums;
 
 public enum Priority
 {

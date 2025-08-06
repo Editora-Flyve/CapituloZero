@@ -1,6 +1,7 @@
-﻿using CapituloZero.SharedKernel;
+﻿using CapituloZero.Domain.Todos.Enums;
+using CapituloZero.SharedKernel;
 
-namespace CapituloZero.Domain.Todos;
+namespace CapituloZero.Domain.Todos.Entities;
 
 public sealed class TodoItem : Entity
 {

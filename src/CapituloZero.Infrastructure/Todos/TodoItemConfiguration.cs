@@ -1,5 +1,5 @@
-﻿using CapituloZero.Domain.Todos;
-using CapituloZero.Domain.Users;
+﻿using CapituloZero.Domain.Todos.Entities;
+using CapituloZero.Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

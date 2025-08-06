@@ -5,6 +5,7 @@ using CapituloZero.Domain.Todos;
 using CapituloZero.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
+using CapituloZero.Domain.Users.Entities;
 
 namespace CapituloZero.Application.Todos.Create;
 
