@@ -1,7 +1,6 @@
 ﻿using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Application.Abstractions.Messaging;
-using CapituloZero.Domain.Todos;
 using CapituloZero.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;

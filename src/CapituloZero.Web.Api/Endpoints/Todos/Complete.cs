@@ -1,7 +1,6 @@
 ﻿using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Application.Todos.Complete;
 using CapituloZero.SharedKernel;
-using CapituloZero.Web.Api.Endpoints;
 using CapituloZero.Web.Api.Extensions;
 using CapituloZero.Web.Api.Infrastructure;
 

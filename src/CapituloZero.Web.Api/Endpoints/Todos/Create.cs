@@ -2,7 +2,6 @@
 using CapituloZero.Application.Todos.Create;
 using CapituloZero.Domain.Todos.Enums;
 using CapituloZero.SharedKernel;
-using CapituloZero.Web.Api.Endpoints;
 using CapituloZero.Web.Api.Extensions;
 using CapituloZero.Web.Api.Infrastructure;
 
