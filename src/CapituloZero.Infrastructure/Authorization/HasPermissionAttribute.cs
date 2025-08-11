@@ -8,5 +8,8 @@ public sealed class HasPermissionAttribute : AuthorizeAttribute
     public HasPermissionAttribute(string permission)
         : base(permission)
     {
+        Permission = permission;
     }
+
+    public string Permission { get; }
 }

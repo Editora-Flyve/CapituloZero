@@ -2,5 +2,5 @@ namespace CapituloZero.Application.Abstractions.Notifications;
 
 public interface IEmailSender
 {
-    Task SendAsync(string to, string subject, string body, CancellationToken cancellationToken = default);
+    Task SendAsync(string recipient, string subject, string body, CancellationToken cancellationToken = default);
 }

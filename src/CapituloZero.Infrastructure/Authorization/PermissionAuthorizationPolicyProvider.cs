@@ -15,7 +15,7 @@ internal sealed class PermissionAuthorizationPolicyProvider : DefaultAuthorizati
 
     public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        AuthorizationPolicy? policy = await base.GetPolicyAsync(policyName);
+        AuthorizationPolicy? policy = await base.GetPolicyAsync(policyName).ConfigureAwait(false);
 
         if (policy is not null)
         {

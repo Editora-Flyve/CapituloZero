@@ -6,11 +6,11 @@ using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Application;
 
-public static class DependencyInjection
+public static class ApplicationServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.Scan(scan => scan.FromAssembliesOf(typeof(DependencyInjection))
+    services.Scan(scan => scan.FromAssembliesOf(typeof(ApplicationServiceCollectionExtensions))
             .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
@@ -28,12 +28,12 @@ public static class DependencyInjection
         services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
         services.Decorate(typeof(ICommandHandler<>), typeof(LoggingDecorator.CommandBaseHandler<>));
 
-        services.Scan(scan => scan.FromAssembliesOf(typeof(DependencyInjection))
+    services.Scan(scan => scan.FromAssembliesOf(typeof(ApplicationServiceCollectionExtensions))
             .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
+    services.AddValidatorsFromAssembly(typeof(ApplicationServiceCollectionExtensions).Assembly, includeInternalTypes: true);
 
         return services;
     }

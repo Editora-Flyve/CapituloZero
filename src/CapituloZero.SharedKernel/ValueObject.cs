@@ -4,7 +4,7 @@ namespace CapituloZero.SharedKernel;
 
 public abstract class ValueObject : IEqualityComparer<ValueObject>, IEquatable<ValueObject>
 {
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null)
             return false;
@@ -71,9 +71,13 @@ public abstract class ValueObject : IEqualityComparer<ValueObject>, IEquatable<V
             return true;
         if (x is null || y is null)
             return false;
-        return EqualOperator(x, y); ;
+    return EqualOperator(x, y);
     }
 
-    public int GetHashCode([DisallowNull] ValueObject obj) => obj.GetHashCode();
+    public int GetHashCode([DisallowNull] ValueObject obj)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        return obj.GetHashCode();
+    }
 
 }

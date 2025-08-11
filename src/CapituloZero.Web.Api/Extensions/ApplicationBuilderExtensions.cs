@@ -1,6 +1,6 @@
 ﻿namespace CapituloZero.Web.Api.Extensions;
 
-public static class ApplicationBuilderExtensions
+internal static class ApplicationBuilderExtensions
 {
     public static IApplicationBuilder UseSwaggerWithUi(this WebApplication app)
     {

@@ -9,21 +9,16 @@ namespace CapituloZero.Web.Api.Endpoints.Editora.Etapas;
 
 internal sealed class Complete : IEndpoint
 {
-    public sealed class Request
-    {
-        public required Guid EtapaId { get; set; }
-    }
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("editora/etapas/complete", async (
-            Request request,
+            CompleteEtapaRequest request,
             ICommandHandler<CompleteEtapaCommand> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new CompleteEtapaCommand(request.EtapaId);
 
-            Result result = await handler.Handle(command, cancellationToken);
+            Result result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
             return result.Match(() => Results.Ok(), CustomResults.Problem);
         })

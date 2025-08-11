@@ -11,8 +11,11 @@ internal sealed class PermissionAuthorizationHandler(IServiceScopeFactory servic
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-    // Reject unauthenticated users
-    if (context.User is not { Identity.IsAuthenticated: true }) return;
+        // Reject unauthenticated users
+        if (context.User is not { Identity.IsAuthenticated: true })
+        {
+            return;
+        }
 
         using IServiceScope scope = serviceScopeFactory.CreateScope();
 

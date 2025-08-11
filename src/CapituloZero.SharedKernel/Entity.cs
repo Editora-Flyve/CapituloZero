@@ -8,7 +8,7 @@ public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>
 
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    public List<IDomainEvent> DomainEvents => [.. _domainEvents];
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     public Guid Id { get; set; } = Guid.CreateVersion7();
 
     public void ClearDomainEvents()
@@ -21,7 +21,7 @@ public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>
         _domainEvents.Add(domainEvent);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var compareTo = obj as Entity;
 
@@ -68,6 +68,7 @@ public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>
 
     public int GetHashCode([DisallowNull] Entity obj)
     {
+        ArgumentNullException.ThrowIfNull(obj);
         return obj.GetHashCode();
     }
 

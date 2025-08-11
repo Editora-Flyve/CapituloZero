@@ -9,32 +9,22 @@ namespace CapituloZero.Web.Api.Endpoints.Editora.Etapas;
 
 internal sealed class SubmitArtefato : IEndpoint
 {
-    public sealed class Request
-    {
-        public required Guid EtapaId { get; set; }
-        public required string FileUri { get; set; }
-        public required string FileName { get; set; }
-        public required string ContentType { get; set; }
-        public long SizeBytes { get; set; }
-        public required Guid UploadedByUserId { get; set; }
-    }
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("editora/etapas/artefatos", async (
-            Request request,
+            SubmitArtefatoRequest request,
             ICommandHandler<SubmitArtefatoCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new SubmitArtefatoCommand(
-                request.EtapaId,
-                request.FileUri,
-                request.FileName,
-                request.ContentType,
-                request.SizeBytes,
-                request.UploadedByUserId);
+                var command = new SubmitArtefatoCommand(
+                    request.EtapaId,
+                    new Uri(request.FileUri),
+                    request.FileName,
+                    request.ContentType,
+                    request.SizeBytes,
+                    request.UploadedByUserId);
 
-            Result result = await handler.Handle(command, cancellationToken);
+            Result result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
             return result.Match(() => Results.Ok(), CustomResults.Problem);
         })

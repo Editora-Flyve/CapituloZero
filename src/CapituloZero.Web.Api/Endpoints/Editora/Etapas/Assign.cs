@@ -9,26 +9,20 @@ namespace CapituloZero.Web.Api.Endpoints.Editora.Etapas;
 
 internal sealed class Assign : IEndpoint
 {
-    public sealed class Request
-    {
-        public required Guid EtapaId { get; set; }
-        public required Guid TerceiroId { get; set; }
-    }
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("editora/etapas/assign", async (
-            Request request,
+            AssignTerceiroToEtapaRequest request,
             ICommandHandler<AssignTerceiroToEtapaCommand> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new AssignTerceiroToEtapaCommand(request.EtapaId, request.TerceiroId);
 
-            Result result = await handler.Handle(command, cancellationToken);
+            Result result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
             return result.Match(() => Results.Ok(), CustomResults.Problem);
         })
-    .WithTags(Tags.Editora)
-    .HasPermission(CapituloZero.Web.Api.Endpoints.Users.Permissions.TerceirosAccess);
+        .WithTags(Tags.Editora)
+        .HasPermission(CapituloZero.Web.Api.Endpoints.Users.Permissions.TerceirosAccess);
     }
 }

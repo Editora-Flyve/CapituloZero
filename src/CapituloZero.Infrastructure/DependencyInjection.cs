@@ -20,7 +20,7 @@ using CapituloZero.Infrastructure.Notifications;
 
 namespace CapituloZero.Infrastructure;
 
-public static class DependencyInjection
+public static class InfrastructureServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
@@ -38,7 +38,7 @@ public static class DependencyInjection
 
         services.AddTransient<IDomainEventsDispatcher, DomainEventsDispatcher>();
 
-    services.AddSingleton<IEmailSender, LoggingEmailSender>();
+        services.AddSingleton<IEmailSender, LoggingEmailSender>();
 
         return services;
     }

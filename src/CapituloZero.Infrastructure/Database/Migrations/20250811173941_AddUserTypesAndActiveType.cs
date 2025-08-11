@@ -11,6 +11,7 @@ namespace Infrastructure.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+        ArgumentNullException.ThrowIfNull(migrationBuilder);
             migrationBuilder.AddColumn<int>(
                 name: "active_type",
                 schema: "public",
@@ -256,6 +257,7 @@ namespace Infrastructure.Database.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+        ArgumentNullException.ThrowIfNull(migrationBuilder);
             migrationBuilder.DropTable(
                 name: "artefatos",
                 schema: "public");

@@ -2,7 +2,7 @@
 
 namespace CapituloZero.Web.Api;
 
-public static class DependencyInjection
+internal static class PresentationServiceCollectionExtensions
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {

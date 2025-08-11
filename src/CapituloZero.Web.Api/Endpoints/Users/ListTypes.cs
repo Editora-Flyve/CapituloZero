@@ -6,12 +6,10 @@ namespace CapituloZero.Web.Api.Endpoints.Users;
 
 internal sealed class ListTypes : IEndpoint
 {
-    public sealed record Request(string Email);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("users/types", async (
-            Request request,
+            ListUserTypesRequest request,
             IApplicationDbContext context,
             CancellationToken cancellationToken) =>
         {

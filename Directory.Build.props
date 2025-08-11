@@ -9,7 +9,8 @@
     <Nullable>enable</Nullable>
 
     <AnalysisLevel>latest</AnalysisLevel>
-    <AnalysisMode>All</AnalysisMode>
+  <AnalysisMode>All</AnalysisMode>
+  <NoWarn>$(NoWarn);CA1812</NoWarn>
     <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
     <!--<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>-->
     <!--<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>-->

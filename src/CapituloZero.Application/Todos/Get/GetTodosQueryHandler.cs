@@ -5,7 +5,7 @@ using CapituloZero.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
 
-namespace CapituloZero.Application.Todos.Get;
+namespace CapituloZero.Application.Todos.List;
 
 internal sealed class GetTodosQueryHandler(IApplicationDbContext context, IUserContext userContext)
     : IQueryHandler<GetTodosQuery, List<TodoResponse>>

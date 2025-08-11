@@ -3,12 +3,13 @@ using Serilog.Context;
 
 namespace CapituloZero.Web.Api.Middleware;
 
-public class RequestContextLoggingMiddleware(RequestDelegate next)
+internal sealed class RequestContextLoggingMiddleware(RequestDelegate next)
 {
     private const string CorrelationIdHeaderName = "Correlation-Id";
 
     public Task Invoke(HttpContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
         using (LogContext.PushProperty("CorrelationId", GetCorrelationId(context)))
         {
             return next.Invoke(context);

@@ -31,6 +31,9 @@ public class Result
 
     public static Result<TValue> Failure<TValue>(Error error) =>
         new(default, false, error);
+
+    public static Result<TValue> ValidationFailure<TValue>(Error error) =>
+        new(default, false, error);
 }
 
 public class Result<TValue> : Result
@@ -48,9 +51,9 @@ public class Result<TValue> : Result
         ? _value!
         : throw new InvalidOperationException("The value of a failure result can't be accessed.");
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Implicit conversion is intentional and widely used; alternate factory methods already exist via Success/Failure.")]
     public static implicit operator Result<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
 
-    public static Result<TValue> ValidationFailure(Error error) =>
-        new(default, false, error);
+    // Kept in base Result to avoid CA1000 on generic type static members.
 }

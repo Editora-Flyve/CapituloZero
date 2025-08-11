@@ -7,7 +7,10 @@ internal sealed class SubmitArtefatoCommandValidator : AbstractValidator<SubmitA
     public SubmitArtefatoCommandValidator()
     {
         RuleFor(x => x.EtapaId).NotEmpty();
-        RuleFor(x => x.FileUri).NotEmpty().MaximumLength(2048);
+        RuleFor(x => x.FileUri)
+            .NotNull()
+            .Must(uri => uri.IsAbsoluteUri)
+            .WithMessage("FileUri must be an absolute URI.");
         RuleFor(x => x.FileName).NotEmpty().MaximumLength(255);
         RuleFor(x => x.ContentType).NotEmpty().MaximumLength(127);
         RuleFor(x => x.SizeBytes).GreaterThanOrEqualTo(0);

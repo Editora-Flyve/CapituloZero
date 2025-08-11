@@ -24,19 +24,16 @@ internal sealed class CreateLivroCommandHandler(IApplicationDbContext context)
         var autor = new Autor
         {
             Nome = command.AutorNome,
-            Email = command.AutorEmail,
-            Livros = []
+            Email = command.AutorEmail
         };
-
         var livro = new Livro
         {
             Titulo = command.Titulo,
             Subtitulo = command.Subtitulo ?? string.Empty,
             Autor = autor
         };
-
+        autor.AddLivro(livro);
         livro.InitializeFromTemplate(fluxo);
-
         context.Autores.Add(autor);
         context.Livros.Add(livro);
 

@@ -9,12 +9,10 @@ namespace CapituloZero.Web.Api.Endpoints.Users;
 
 internal sealed class Register : IEndpoint
 {
-    public sealed record Request(string Email, string FirstName, string LastName, string Password, UserType? Types);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("users/register", async (
-            Request request,
+            RegisterUserRequest request,
             ICommandHandler<RegisterUserCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {

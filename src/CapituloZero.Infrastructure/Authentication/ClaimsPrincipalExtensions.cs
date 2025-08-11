@@ -9,9 +9,9 @@ internal static class ClaimsPrincipalExtensions
     {
         string? userId = principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        return Guid.TryParse(userId, out Guid parsedUserId) ?
-            parsedUserId :
-            throw new ApplicationException("User id is unavailable");
+        return Guid.TryParse(userId, out Guid parsedUserId)
+            ? parsedUserId
+            : throw new InvalidOperationException("User id is unavailable");
     }
 
     public static string? GetActiveType(this ClaimsPrincipal? principal)

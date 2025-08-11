@@ -9,12 +9,10 @@ namespace CapituloZero.Web.Api.Endpoints.Users;
 
 internal sealed class Login : IEndpoint
 {
-    public sealed record Request(string Email, string Password, UserType? DesiredType);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("users/login", async (
-            Request request,
+            LoginUserRequest request,
             ICommandHandler<LoginUserCommand, LoginResponse> handler,
             CancellationToken cancellationToken) =>
         {
