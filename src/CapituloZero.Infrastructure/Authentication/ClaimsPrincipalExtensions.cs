@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using CapituloZero.Domain.Users;
 
 namespace CapituloZero.Infrastructure.Authentication;
 
@@ -12,4 +13,7 @@ internal static class ClaimsPrincipalExtensions
             parsedUserId :
             throw new ApplicationException("User id is unavailable");
     }
+
+    public static string? GetActiveType(this ClaimsPrincipal? principal)
+        => principal?.FindFirst("active_type")?.Value;
 }

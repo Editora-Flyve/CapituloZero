@@ -5,6 +5,7 @@ using CapituloZero.Domain.Users.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using CapituloZero.Domain.Users;
 
 namespace CapituloZero.Infrastructure.Authentication;
 
@@ -17,13 +18,31 @@ internal sealed class TokenProvider(IConfiguration configuration) : ITokenProvid
 
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email)
+        };
+
+        // Add active type claim if present
+        if (user.ActiveType is UserType active && active != UserType.None)
+        {
+            claims.Add(new Claim("active_type", active.ToString()));
+        }
+
+        // Add role claims for all types for convenience-based authorization
+        foreach (UserType t in Enum.GetValues<UserType>())
+        {
+            if (t == UserType.None) continue;
+            if (user.Types.HasFlag(t))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, t.ToString()));
+            }
+        }
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(
-            [
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            ]),
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
             SigningCredentials = credentials,
             Issuer = configuration["Jwt:Issuer"],

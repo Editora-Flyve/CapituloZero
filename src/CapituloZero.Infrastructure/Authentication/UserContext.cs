@@ -1,5 +1,6 @@
 ﻿using CapituloZero.Application.Abstractions.Authentication;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace CapituloZero.Infrastructure.Authentication;
 
@@ -18,4 +19,11 @@ internal sealed class UserContext : IUserContext
             .User
             .GetUserId() ??
         throw new ApplicationException("User context is unavailable");
+
+    public string? ActiveType =>
+        _httpContextAccessor
+            .HttpContext?
+            .User?
+            .FindFirst("active_type")?
+            .Value;
 }

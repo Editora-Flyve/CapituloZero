@@ -15,6 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using CapituloZero.SharedKernel;
+using CapituloZero.Application.Abstractions.Notifications;
+using CapituloZero.Infrastructure.Notifications;
 
 namespace CapituloZero.Infrastructure;
 
@@ -35,6 +37,8 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         services.AddTransient<IDomainEventsDispatcher, DomainEventsDispatcher>();
+
+    services.AddSingleton<IEmailSender, LoggingEmailSender>();
 
         return services;
     }
