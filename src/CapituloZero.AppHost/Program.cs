@@ -7,6 +7,7 @@ var postgresdb = builder.AddPostgres("postgres")
 
 var api = builder.AddProject<Projects.CapituloZero_Web_Api>("api")
     .WithEnvironment("ConnectionStrings__Database", postgresdb  )
+    .WithExternalHttpEndpoints()
     .WithReference(postgresdb)
     .WaitFor(postgresdb);
 

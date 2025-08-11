@@ -3,4 +3,5 @@
 public interface IUserContext
 {
     Guid UserId { get; }
+    string? ActiveType { get; }
 }

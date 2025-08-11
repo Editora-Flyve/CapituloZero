@@ -3,23 +3,24 @@ using CapituloZero.Application.Users.Login;
 using CapituloZero.SharedKernel;
 using CapituloZero.Web.Api.Extensions;
 using CapituloZero.Web.Api.Infrastructure;
+using CapituloZero.Domain.Users;
 
 namespace CapituloZero.Web.Api.Endpoints.Users;
 
 internal sealed class Login : IEndpoint
 {
-    public sealed record Request(string Email, string Password);
+    public sealed record Request(string Email, string Password, UserType? DesiredType);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("users/login", async (
             Request request,
-            ICommandHandler<LoginUserCommand, string> handler,
+            ICommandHandler<LoginUserCommand, LoginResponse> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new LoginUserCommand(request.Email, request.Password);
+            var command = new LoginUserCommand(request.Email, request.Password, request.DesiredType);
 
-            Result<string> result = await handler.Handle(command, cancellationToken);
+            Result<LoginResponse> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
