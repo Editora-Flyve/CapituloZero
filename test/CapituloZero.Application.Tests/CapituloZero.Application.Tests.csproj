@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <AssemblyName>CapituloZero.Application.Tests</AssemblyName>
+    <RootNamespace>CapituloZero.Application.Tests</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CapituloZero.Application\CapituloZero.Application.csproj" />
+    <ProjectReference Include="..\..\src\CapituloZero.Infrastructure\CapituloZero.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\CapituloZero.Domain\CapituloZero.Domain.csproj" />
+    <ProjectReference Include="..\..\src\CapituloZero.SharedKernel\CapituloZero.SharedKernel.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>
