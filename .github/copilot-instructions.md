@@ -14,10 +14,12 @@ applyTo: '**/*.cs'
 ## Developer Workflows
 
 - Build and run via standard .NET CLI (`dotnet build`, `dotnet run`), solution file is [`CapituloZero.sln`](CapituloZero.sln ).
-- API endpoints are modular: implement `IEndpoint` and register with `MapEndpoint`.
+- API endpoints are modular: implement `IEndpoint`; the app discovers them via `services.AddEndpoints(Assembly)` and maps them with `app.MapEndpoints()`.
 - Blazor components live in `Web/Components` and consume APIs via `HttpClient` (see `WeatherApiClient` for example).
 - Data access uses Entity Framework Core, with context and configuration in `Infrastructure`.
 - Handlers, validators, and services are auto-registered via assembly scanning.
+ - Authentication uses JWT; authorization uses dynamic permission policies. Use `.RequireAuthorization()` and `.HasPermission("perm")` on endpoints as needed.
+ - Prefer returning `result.Match(Results.Ok, CustomResults.Problem)` from endpoints to standardize error shapes.
 
 ## Project-Specific Conventions
 
@@ -27,6 +29,7 @@ applyTo: '**/*.cs'
 - Error handling: use `Result`/`Error` types for flow control; exceptions only for unexpected failures.
 - Naming: `XxxCommandHandler`, `XxxQueryHandler`, endpoints by resource/action (e.g., `Todos/Create.cs`).
 - XML doc comments required for public APIs, with `<example>` and `<code>` when relevant.
+ - EF Core: PostgreSQL via Npgsql, snake_case naming; default schema is `public`.
 
 ## Integration & Extensibility
 

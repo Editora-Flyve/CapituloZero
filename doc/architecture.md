@@ -10,12 +10,13 @@ CapituloZero is a modular .NET 9 solution, designed for extensibility, separatio
 ## Project Structure & Layer Responsibilities
 
 - **CapituloZero.Web**: Blazor Server UI. Contains Razor components in `Components/`, consumes APIs via `HttpClient` (see `WeatherApiClient.cs`).
-- **CapituloZero.Web.Api**: RESTful Minimal API. Endpoints are modular (`Endpoints/`), implement `IEndpoint`, and are registered via `MapEndpoint`. Handles authentication, authorization, health checks, and Swagger.
+- **CapituloZero.Web.Api**: RESTful Minimal API. Endpoints are modular (`Endpoints/`), implement `IEndpoint`, are discovered via `AddEndpoints(Assembly)` and mapped with `app.MapEndpoints()`. Handles authentication (JWT), authorization (permission-based policies), health checks, Serilog logging, exception handling, and Swagger.
 - **CapituloZero.Application**: Application layer. Orchestrates business logic, implements CQRS (commands/queries), handlers, validation (FluentValidation), and logging (Serilog via decorators). Handlers and validators are auto-registered via assembly scanning.
 - **CapituloZero.Domain**: Domain layer. Contains domain entities, domain events, business rules, and aggregates. Events are triggered by entities and processed after persistence.
-- **CapituloZero.Infrastructure**: Infrastructure layer. Implements persistence (Entity Framework Core, see `Database/ApplicationDbContext.cs`), authentication, authorization, and other infrastructure services. Domain events are dispatched via `DomainEventsDispatcher` after `SaveChangesAsync`.
+- **CapituloZero.Infrastructure**: Infrastructure layer. Implements persistence (Entity Framework Core with Npgsql, see `Database/ApplicationDbContext.cs`), authentication (password hashing, JWT token creation, user context), authorization (dynamic permission policies), and other services (time provider). Domain events are dispatched via `DomainEventsDispatcher` after `SaveChangesAsync`.
 - **CapituloZero.ServiceDefaults**: Shared service configuration (telemetry, resilience, service discovery, health checks, OpenTelemetry). See `Extensions.cs` for extension methods.
 - **CapituloZero.SharedKernel**: Shared contracts, base types, and utilities (e.g., `Entity`, `ValueObject`, `Result`, `Error`, domain event interfaces).
+- **CapituloZero.AppHost**: .NET Aspire orchestrator for local development. Wires Postgres, API, and Web projects; sets environment variables (e.g., `ConnectionStrings__Database`) and ensures startup order.
 
 ---
 
@@ -27,15 +28,26 @@ CapituloZero is a modular .NET 9 solution, designed for extensibility, separatio
 - **Dependency Injection**: All services, handlers, validators, and contexts are registered via extension methods (`AddApplication`, `AddInfrastructure`, `AddPresentation`).
 - **Error Handling**: Uses `Result`/`Error` types for flow control; exceptions are reserved for unexpected failures. API error responses are standardized via `CustomResults`.
 
+Key runtime wiring (from `Web.Api/Program.cs`):
+- `builder.AddServiceDefaults()` adds OpenTelemetry, health checks, discovery, and resilience.
+- `builder.Host.UseSerilog(...)` configures Serilog from app settings.
+- `services.AddSwaggerGenWithAuth()` enables Swagger with JWT support.
+- `services.AddApplication().AddPresentation().AddInfrastructure(configuration)` registers all layers.
+- `services.AddEndpoints(Assembly.GetExecutingAssembly())` discovers endpoint classes.
+- `app.MapDefaultEndpoints()` maps default health endpoints (dev only) from ServiceDefaults.
+- `app.MapEndpoints()` invokes each discovered `IEndpoint.MapEndpoint`.
+- `app.ApplyMigrations()` runs EF Core migrations in Development.
+- Global middleware: request context logging, Serilog request logging, exception handler, authentication, and authorization.
+
 ---
 
 ## File & Layer Interactions
 
-- **Blazor UI (`Web`)**: Razor components interact with the API via `HttpClient`. Services are injected using `@inject`. UI logic is separated from data access.
-- **API Endpoints (`Web.Api`)**: Endpoints implement `IEndpoint`, use DI to access command/query handlers, and return standardized results. Endpoints are mapped in `MapEndpoint`.
+- **Blazor UI (`Web`)**: Razor components interact with the API via `HttpClient`. Services are injected using `@inject`. UI logic is separated from data access. Output caching and antiforgery are enabled by default.
+- **API Endpoints (`Web.Api`)**: Endpoints implement `IEndpoint`, use DI to access command/query handlers, and return standardized results. Endpoints are discovered with `AddEndpoints` and mapped via `app.MapEndpoints()`. Use `.WithTags(Tags.X)` for grouping and `.RequireAuthorization()` and/or `.HasPermission("perm")` for access control. Prefer returning `result.Match(Results.Ok, CustomResults.Problem)`.
 - **Application Layer**: Defines commands/queries (in feature folders), handlers (`XxxCommandHandler`, `XxxQueryHandler`), and validators. Handlers orchestrate domain logic and interact with the domain/entities.
 - **Domain Layer**: Entities encapsulate business rules and raise domain events. Events are processed after persistence by handlers implementing `IDomainEventHandler<>`.
-- **Infrastructure Layer**: `ApplicationDbContext` manages persistence, applies configurations, and publishes domain events after saving changes. Infrastructure services are registered in `DependencyInjection.cs`.
+- **Infrastructure Layer**: `ApplicationDbContext` manages persistence, applies configurations (`ApplyConfigurationsFromAssembly`), sets default schema (`Schemas.Default = "public"`), and publishes domain events after saving changes. Npgsql is configured with snake_case naming and a custom migrations history table schema. Infrastructure services (authN, authZ, token provider, password hasher, time provider) are registered in `DependencyInjection.cs`.
 - **ServiceDefaults**: Provides extension methods for telemetry, resilience, and service discovery, referenced by all service projects.
 - **SharedKernel**: Supplies base types, error/result handling, and domain event contracts used across all layers.
 
@@ -46,9 +58,9 @@ CapituloZero is a modular .NET 9 solution, designed for extensibility, separatio
 - **Naming**: Handlers as `XxxCommandHandler`/`XxxQueryHandler`; endpoints by resource/action (e.g., `Todos/Create.cs`).
 - **Code Style**: PascalCase for public members, camelCase for private fields/locals, interfaces prefixed with "I". Prefer file-scoped namespaces and single-line using directives.
 - **Async/Await**: All I/O is asynchronous.
-- **Validation**: Always via FluentValidation, applied as decorators.
-- **Logging**: Automatic via Serilog decorators.
-- **Error Handling**: Use `Result`/`Error` types for flow control; exceptions only for unexpected failures.
+- **Validation**: Always via FluentValidation, applied as decorators. Validators can be `internal` (assembly scanning includes internal types).
+- **Logging**: Automatic via Serilog decorators for handlers. Also use `RequestContextLoggingMiddleware` to push a `CorrelationId` (from `Correlation-Id` header or trace identifier) into the log context.
+- **Error Handling**: Use `Result`/`Error` types for flow control; exceptions only for unexpected failures. Serialize API errors with `CustomResults.Problem`, which maps `ErrorType` to RFC 7231 types and HTTP status codes and emits validation errors in the `extensions.errors` payload.
 - **XML Doc Comments**: Required for public APIs, with `<example>` and `<code>` when relevant.
 
 ---
@@ -65,6 +77,11 @@ CapituloZero is a modular .NET 9 solution, designed for extensibility, separatio
 	4. Implement endpoint in `Web.Api`.
 	5. Create Blazor component to consume/display data.
 
+AuthN/Z specifics:
+- JWT is configured via `Jwt:Secret`, `Jwt:Issuer`, `Jwt:Audience`, `Jwt:ExpirationInMinutes`. Tokens include `sub` (user id) and `email`.
+- `UserContext` resolves the current user id from `ClaimTypes.NameIdentifier`.
+- Permission-based authorization uses a dynamic policy provider and requirement. Use `.HasPermission("<policy>")` on endpoints. Current `PermissionProvider` is a stub; replace with a real data source when implementing permissions.
+
 ---
 
 ## AI-Ready Guidelines
@@ -73,6 +90,12 @@ CapituloZero is a modular .NET 9 solution, designed for extensibility, separatio
 - Modular boundaries and clear responsibilities enable safe, incremental code synthesis.
 - Extension points (DI, decorators, endpoints, validators) are explicit and discoverable.
 - All new code must respect separation of concerns, layer boundaries, and registration conventions.
+
+Endpoint contract template:
+- Input: strongly typed request DTOs and/or route parameters.
+- Processing: delegate to a handler via `ICommandHandler`/`IQueryHandler`.
+- Output: `Result`/`Result<T>` mapped using `ResultExtensions.Match` to `Results` or `CustomResults.Problem`.
+- Security: add `.RequireAuthorization()` and/or `.HasPermission("perm")` as needed.
 
 ---
 
