@@ -54,5 +54,6 @@ applyTo: '**/*.cs'
 ## Restrictions
 
 - Do not generate code for Razor Pages or MVC; use Blazor Server only.
-- You may introduce external libraries if they are open-source and compatible with the project's architecture.
+- When adding dependencies, prefer Microsoft-supported packages first (for example: Microsoft.*, System.*, Azure.*, AspNetCore.*).
+- Only introduce third-party open-source libraries when there is no solid Microsoft option and they are compatible with the project's architecture and licensing.
 - Always respect modularity and separation of concerns.
