@@ -5,6 +5,7 @@ using CapituloZero.Domain.Users.Entities;
 using CapituloZero.Infrastructure.Database;
 using CapituloZero.Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
+using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Application.Tests.Todos;
 
@@ -36,7 +37,7 @@ public class CompleteTodoCommandHandlerTests
     }
 
     [Fact]
-    public async Task Returns_NotFound_When_Todo_Missing()
+    public async Task ReturnsNotFoundWhenTodoMissing()
     {
         await using var db = CreateInMemoryDb();
         var handler = new CompleteTodoCommandHandler(db, new FakeClock(DateTime.UtcNow), new FakeUserContext(Guid.NewGuid()));
@@ -46,7 +47,7 @@ public class CompleteTodoCommandHandlerTests
     }
 
     [Fact]
-    public async Task Completes_Todo_When_Valid()
+    public async Task CompletesTodoWhenValid()
     {
         await using var db = CreateInMemoryDb();
         var user = new User { Email = "a@b.com", FirstName = "a", LastName = "b", PasswordHash = "h" };

@@ -4,6 +4,7 @@ using CapituloZero.Domain.Users;
 using CapituloZero.Domain.Users.Entities;
 using CapituloZero.Infrastructure.Database;
 using CapituloZero.Infrastructure.DomainEvents;
+using CapituloZero.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CapituloZero.Application.Tests.Users;
@@ -36,7 +37,7 @@ public class LoginUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Returns_NotFound_When_User_Does_Not_Exist()
+    public async Task ReturnsNotFoundWhenUserDoesNotExist()
     {
         await using var db = CreateInMemoryDb();
         var handler = new LoginUserCommandHandler(db, new FakePasswordHasher(), new FakeTokenProvider());
@@ -46,7 +47,7 @@ public class LoginUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Returns_SelectTypes_When_Multiple_And_No_DesiredType()
+    public async Task ReturnsSelectTypesWhenMultipleAndNoDesiredType()
     {
         await using var db = CreateInMemoryDb();
         var user = new User { Email = "a@b.com", FirstName = "a", LastName = "b", PasswordHash = "pw", Types = UserType.Cliente | UserType.Terceiro };
@@ -57,13 +58,13 @@ public class LoginUserCommandHandlerTests
         var result = await handler.Handle(new LoginUserCommand(user.Email, "pw", null), default);
 
         Assert.True(result.IsSuccess);
-        Assert.True(result.Value.RequiresTypeSelection);
+        Assert.True(result.Value.RequiresSelection);
         Assert.Null(result.Value.Token);
         Assert.Equal(2, result.Value.AvailableTypes!.Count);
     }
 
     [Fact]
-    public async Task Returns_Token_When_Type_Selected()
+    public async Task ReturnsTokenWhenTypeSelected()
     {
         await using var db = CreateInMemoryDb();
         var user = new User { Email = "a@b.com", FirstName = "a", LastName = "b", PasswordHash = "pw", Types = UserType.Cliente | UserType.Terceiro };
@@ -74,7 +75,7 @@ public class LoginUserCommandHandlerTests
         var result = await handler.Handle(new LoginUserCommand(user.Email, "pw", UserType.Cliente), default);
 
         Assert.True(result.IsSuccess);
-        Assert.False(result.Value.RequiresTypeSelection);
+        Assert.False(result.Value.RequiresSelection);
         Assert.NotNull(result.Value.Token);
         Assert.Equal(UserType.Cliente, result.Value.ActiveType);
     }

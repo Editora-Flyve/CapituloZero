@@ -6,7 +6,7 @@ namespace CapituloZero.Domain.Tests;
 public class TodoItemTests
 {
     [Fact]
-    public void AddLabel_Adds_Single_Label()
+    public void AddLabelAddsSingleLabel()
     {
         var todo = new TodoItem
         {
@@ -23,7 +23,7 @@ public class TodoItemTests
     }
 
     [Fact]
-    public void AddLabels_Adds_Multiple_Labels()
+    public void AddLabelsAddsMultipleLabels()
     {
         var todo = new TodoItem
         {

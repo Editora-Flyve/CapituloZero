@@ -19,7 +19,7 @@ public class EntityAndValueObjectTests
     }
 
     [Fact]
-    public void Entity_Equality_By_Id()
+    public void EntityEqualityById()
     {
         var e1 = new SampleEntity();
         var e2 = new SampleEntity { Id = e1.Id };
@@ -28,7 +28,7 @@ public class EntityAndValueObjectTests
     }
 
     [Fact]
-    public void ValueObject_Equality_By_Components()
+    public void ValueObjectEqualityByComponents()
     {
         var m1 = new Money(10, "USD");
         var m2 = new Money(10, "USD");

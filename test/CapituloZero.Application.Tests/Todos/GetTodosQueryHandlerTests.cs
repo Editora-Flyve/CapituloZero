@@ -4,6 +4,7 @@ using CapituloZero.Domain.Todos.Entities;
 using CapituloZero.Domain.Users.Entities;
 using CapituloZero.Infrastructure.Database;
 using CapituloZero.Infrastructure.DomainEvents;
+using CapituloZero.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CapituloZero.Application.Tests.Todos;
@@ -31,7 +32,7 @@ public class GetTodosQueryHandlerTests
     }
 
     [Fact]
-    public async Task Returns_Unauthorized_When_Context_Differs()
+    public async Task ReturnsUnauthorizedWhenContextDiffers()
     {
         await using var db = CreateInMemoryDb();
         var handler = new GetTodosQueryHandler(db, new FakeUserContext(Guid.NewGuid()));
@@ -41,7 +42,7 @@ public class GetTodosQueryHandlerTests
     }
 
     [Fact]
-    public async Task Returns_Todos_For_User()
+    public async Task ReturnsTodosForUser()
     {
         await using var db = CreateInMemoryDb();
         var user = new User { Email = "a@b.com", FirstName = "a", LastName = "b", PasswordHash = "h" };

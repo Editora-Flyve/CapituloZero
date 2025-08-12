@@ -34,11 +34,18 @@ public class CreateTodoCommandHandlerTests
     }
 
     [Fact]
-    public async Task Returns_Unauthorized_When_UserContext_Differs()
+    public async Task ReturnsUnauthorizedWhenUserContextDiffers()
     {
         await using var db = CreateInMemoryDb();
         var handler = new CreateTodoCommandHandler(db, new SystemDateTimeProvider(), new FakeUserContext(Guid.NewGuid()));
-        var cmd = new CreateTodoCommand(Guid.NewGuid(), "desc", Priority.Low, DateTime.UtcNow.AddDays(1), []);
+        var cmd = new CreateTodoCommand
+        {
+            UserId = Guid.NewGuid(),
+            Description = "desc",
+            Priority = Priority.Low,
+            DueDate = DateTime.UtcNow.AddDays(1),
+            Labels = []
+        };
 
         var result = await handler.Handle(cmd, default);
 
@@ -47,7 +54,7 @@ public class CreateTodoCommandHandlerTests
     }
 
     [Fact]
-    public async Task Creates_Todo_When_User_Exists_And_Context_Matches()
+    public async Task CreatesTodoWhenUserExistsAndContextMatches()
     {
         await using var db = CreateInMemoryDb();
         var user = new User { Email = "a@b.com", FirstName = "a", LastName = "b", PasswordHash = "h" };
@@ -55,7 +62,14 @@ public class CreateTodoCommandHandlerTests
         await db.SaveChangesAsync();
 
         var handler = new CreateTodoCommandHandler(db, new SystemDateTimeProvider(), new FakeUserContext(user.Id));
-        var cmd = new CreateTodoCommand(user.Id, "desc", Priority.High, DateTime.UtcNow.AddDays(1), new []{"work"});
+        var cmd = new CreateTodoCommand
+        {
+            UserId = user.Id,
+            Description = "desc",
+            Priority = Priority.High,
+            DueDate = DateTime.UtcNow.AddDays(1),
+            Labels = ["work"]
+        };
 
         var result = await handler.Handle(cmd, default);
 

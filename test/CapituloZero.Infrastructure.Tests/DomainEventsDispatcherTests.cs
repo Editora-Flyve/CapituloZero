@@ -22,13 +22,13 @@ public class DomainEventsDispatcherTests
     public async Task DispatchAsync_Resolves_And_Invokes_Handlers()
     {
         var services = new ServiceCollection();
-        services.AddScoped<IDomainEventHandler<PingEvent>, PingHandler>();
+        services.AddSingleton<IDomainEventHandler<PingEvent>, PingHandler>();
         var provider = services.BuildServiceProvider();
 
         var dispatcher = new DomainEventsDispatcher(provider);
         var ev = new PingEvent();
 
-        await dispatcher.DispatchAsync(new []{ ev });
+        await dispatcher.DispatchAsync([ev]);
 
         var handler = provider.GetRequiredService<IDomainEventHandler<PingEvent>>() as PingHandler;
         Assert.NotNull(handler);

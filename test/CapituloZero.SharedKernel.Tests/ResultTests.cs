@@ -5,7 +5,7 @@ namespace CapituloZero.SharedKernel.Tests;
 public class ResultTests
 {
     [Fact]
-    public void Success_Result_Has_IsSuccess_True_And_No_Error()
+    public void SuccessResultHasIsSuccessTrueAndNoError()
     {
         var r = Result.Success();
         Assert.True(r.IsSuccess);
@@ -14,7 +14,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Failure_Result_Has_IsSuccess_False_And_Error()
+    public void FailureResultHasIsSuccessFalseAndError()
     {
         var err = Error.Failure("Test", "message");
         var r = Result.Failure(err);
@@ -24,7 +24,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Generic_Success_Carries_Value()
+    public void GenericSuccessCarriesValue()
     {
         Result<int> r = Result.Success(42);
         Assert.True(r.IsSuccess);
@@ -32,7 +32,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Generic_Failure_Throws_On_Value_Access()
+    public void GenericFailureThrowsOnValueAccess()
     {
         Result<int> r = Result.Failure<int>(Error.Failure("X","Y"));
         Assert.True(r.IsFailure);
@@ -40,7 +40,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Implicit_Conversion_From_NonNull_Is_Success()
+    public void ImplicitConversionFromNonNullIsSuccess()
     {
         Result<string> r = "ok";
         Assert.True(r.IsSuccess);
@@ -48,7 +48,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void Implicit_Conversion_From_Null_Is_Failure_NullValue()
+    public void ImplicitConversionFromNullIsFailureNullValue()
     {
         string? s = null;
         Result<string> r = s;
