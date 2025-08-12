@@ -124,12 +124,10 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         continue-on-error: true
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >-
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+            -Dsonar.organization=${SONAR_ORGANIZATION}
             -Dsonar.coverageReportPaths=artifacts/coverage.cobertura.xml
             -Dsonar.qualitygate.wait=true
 
@@ -146,8 +144,9 @@ jobs:
           path: ./artifacts
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
+        continue-on-error: true
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${CODECOV_TOKEN}
           files: ./artifacts/coverage.cobertura.xml
           flags: unittests
           fail_ci_if_error: true
