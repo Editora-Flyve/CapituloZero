@@ -12,7 +12,7 @@ internal sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<A
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
         // Use a local dev connection string or environment-provided one; default to localhost
-        string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__database")
+    string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__postgresdb")
             ?? "Host=localhost;Port=5432;Database=capitulo_zero_dev;Username=postgres;Password=postgres";
 
         optionsBuilder

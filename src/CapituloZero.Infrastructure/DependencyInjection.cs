@@ -45,7 +45,8 @@ public static class InfrastructureServiceCollectionExtensions
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        string? connectionString = configuration.GetConnectionString("database");
+        // Use the same connection string name provisioned by Aspire and used by HealthChecks
+        string? connectionString = configuration.GetConnectionString("postgresdb");
 
         services.AddDbContext<ApplicationDbContext>(
             options => options
