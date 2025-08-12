@@ -1,0 +1,139 @@
+name: CI/CD (Main)
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: main-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  COVERAGE_THRESHOLD: "90"
+  SOLUTION_FILE: CapituloZero.sln
+
+jobs:
+  build_test_coverage:
+    name: Build, Test, Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore $env:SOLUTION_FILE
+        shell: pwsh
+
+      - name: Build (Release)
+        run: dotnet build $env:SOLUTION_FILE --configuration Release --no-restore
+        shell: pwsh
+
+      - name: Install tools (dotnet-coverage, reportgenerator)
+        shell: bash
+        run: |
+          dotnet tool install --tool-path ./.dotnet-tools dotnet-coverage
+          dotnet tool install --tool-path ./.dotnet-tools dotnet-reportgenerator-globaltool
+          echo "TOOLS_PATH=$GITHUB_WORKSPACE/.dotnet-tools" >> $GITHUB_ENV
+
+      - name: Test with coverage (Cobertura)
+        run: |
+          mkdir -p TestResults
+          ./.dotnet-tools/dotnet-coverage collect "dotnet test $env:SOLUTION_FILE --configuration Release --no-build --logger trx;LogFileName=tests.trx" \
+            -f cobertura -o TestResults/coverage.cobertura.xml
+        shell: pwsh
+
+      - name: Generate coverage report
+        run: |
+          ./.dotnet-tools/reportgenerator \
+            -reports:TestResults/coverage.cobertura.xml \
+            -targetdir:TestResults/CoverageReport \
+            -reporttypes:Html;Cobertura;TextSummary
+        shell: bash
+
+      - name: Enforce coverage threshold (overall)
+        run: |
+          $summary = Get-Content "TestResults/CoverageReport/Summary.txt" -Raw
+          Write-Host $summary
+          if ($summary -match 'Line coverage:\s*([0-9]+)\.([0-9]+)') {
+            $pct = [int]$Matches[1]
+          } elseif ($summary -match 'Line coverage:\s*([0-9]+)') {
+            $pct = [int]$Matches[1]
+          } else {
+            Write-Error "Não foi possível encontrar a porcentagem de cobertura em Summary.txt"
+          }
+          Write-Host "Cobertura encontrada: $pct%"
+          $threshold = [int]$env:COVERAGE_THRESHOLD
+          if ($pct -lt $threshold) {
+            Write-Error "Cobertura ($pct%) abaixo do mínimo ($threshold%)." 
+          }
+        shell: pwsh
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-test-and-coverage
+          path: |
+            **/TestResults/*.trx
+            TestResults/coverage.cobertura.xml
+            TestResults/CoverageReport/**
+          if-no-files-found: warn
+
+  sonarcloud:
+    name: SonarCloud (quality gate)
+    runs-on: ubuntu-latest
+    needs: [build_test_coverage]
+    if: ${{ vars.SONAR_PROJECT_KEY != '' && vars.SONAR_ORGANIZATION != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: main-test-and-coverage
+          path: ./artifacts
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        if: ${{ secrets.SONAR_TOKEN != '' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >-
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.coverageReportPaths=artifacts/coverage.cobertura.xml
+            -Dsonar.qualitygate.wait=true
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [build_test_coverage, sonarcloud]
+    if: ${{ always() && needs.build_test_coverage.result == 'success' && (needs.sonarcloud.result == 'success' || needs.sonarcloud.result == 'skipped') }}
+    steps:
+      - name: Placeholder deploy
+        run: |
+          echo "Implementar passo de deploy aqui (ex: Docker push, Azure Web App, Kubernetes, etc)."
+          echo "Placeholder concluído sem deploy real."
+        shell: bash

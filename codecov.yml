@@ -1,0 +1,15 @@
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  status:
+    project:
+      default:
+        target: 90
+        threshold: 1
+        if_no_uploads: error
+    patch:
+      default:
+        target: 90
+        threshold: 0
+        if_no_uploads: error

@@ -1,0 +1,154 @@
+name: CI (Pull Request)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [ main ]
+
+concurrency:
+  group: pr-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  COVERAGE_THRESHOLD: "90"
+  SOLUTION_FILE: CapituloZero.sln
+
+jobs:
+  build_and_test:
+    name: Build, Test and Coverage
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Restore
+        run: dotnet restore $env:SOLUTION_FILE
+        shell: pwsh
+      - name: Build (Release)
+        run: dotnet build $env:SOLUTION_FILE --configuration Release --no-restore
+        shell: pwsh
+      - name: Install tools
+        shell: bash
+        run: |
+          dotnet tool install --tool-path ./.dotnet-tools dotnet-coverage
+          dotnet tool install --tool-path ./.dotnet-tools dotnet-reportgenerator-globaltool
+          dotnet tool install --tool-path ./.dotnet-tools dotnet-format
+      - name: Test with coverage (Cobertura)
+        run: |
+          mkdir -p TestResults
+          ./.dotnet-tools/dotnet-coverage collect "dotnet test $env:SOLUTION_FILE --configuration Release --no-build --logger trx;LogFileName=tests.trx" -f cobertura -o TestResults/coverage.cobertura.xml
+        shell: pwsh
+      - name: Generate coverage report
+        shell: bash
+        run: |
+          ./.dotnet-tools/reportgenerator -reports:TestResults/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:Html;Cobertura;TextSummary
+      - name: Enforce 90% coverage on changed files (patch)
+        if: ${{ github.event_name == 'pull_request' }}
+        shell: pwsh
+        run: |
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/${{ github.event.pull_request.base.ref }}:refs/remotes/origin/${{ github.event.pull_request.base.ref }}
+          $changed = git diff --name-only --diff-filter=AM origin/${{ github.event.pull_request.base.ref }}...HEAD -- 'src/**/*.cs'
+          if (-not $changed) { exit 0 }
+          [xml]$cov = Get-Content 'TestResults/coverage.cobertura.xml'
+          $changedList = $changed -split "`n" | Where-Object { $_ -and ($_ -like '*.cs') }
+          $total = 0; $covered = 0
+          foreach ($file in $changedList) {
+            $pattern = [Regex]::Escape(($file -replace '\\','/')) + '$'
+            $classes = $cov.coverage.packages.package.classes.class | Where-Object { $_.filename -replace '\\','/' -match $pattern }
+            foreach ($cls in $classes) {
+              foreach ($line in $cls.lines.line) {
+                if ($line.number -and $line.hits -ne $null) {
+                  $total += 1
+                  if ([int]$line.hits -gt 0) { $covered += 1 }
+                }
+              }
+            }
+          }
+          $pct = ($total -eq 0) ? 0 : [math]::Floor(($covered / $total) * 100)
+          Write-Host "Patch coverage: $pct% ($covered/$total)"
+          $threshold = [int]$env:COVERAGE_THRESHOLD
+          if ($pct -lt $threshold) { Write-Error "Cobertura dos arquivos alterados ($pct%) abaixo do mínimo ($threshold%)." }
+      - name: Enforce coverage threshold (overall fallback)
+        id: coverage_check
+        shell: pwsh
+        run: |
+          $summary = Get-Content "TestResults/CoverageReport/Summary.txt" -Raw
+          Write-Host $summary
+          if ($summary -match 'Line coverage:\s*([0-9]+)\.([0-9]+)') { $pct = [int]$Matches[1] } elseif ($summary -match 'Line coverage:\s*([0-9]+)') { $pct = [int]$Matches[1] } else { Write-Error 'Não foi possível encontrar a porcentagem de cobertura em Summary.txt' }
+          Write-Host "Cobertura encontrada: $pct%"
+          $threshold = [int]$env:COVERAGE_THRESHOLD
+          if ($pct -lt $threshold) { Write-Error "Cobertura ($pct%) abaixo do mínimo ($threshold%)." }
+          "pct=$pct" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+      - name: Upload test results and coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-test-and-coverage
+          path: |
+            **/TestResults/*.trx
+            TestResults/coverage.cobertura.xml
+            TestResults/CoverageReport/**
+          if-no-files-found: warn
+      - name: Code style check (dotnet format)
+        shell: bash
+        run: ./.dotnet-tools/dotnet-format --verify-no-changes --severity error
+
+  sonarcloud:
+    name: SonarCloud (optional)
+    runs-on: ubuntu-latest
+    needs: [build_and_test]
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - uses: actions/download-artifact@v4
+        with:
+          name: pr-test-and-coverage
+          path: ./artifacts
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >-
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.coverageReportPaths=artifacts/coverage.cobertura.xml
+            -Dsonar.qualitygate.wait=true
+
+  codecov:
+    name: Codecov (optional)
+    runs-on: ubuntu-latest
+    needs: [build_and_test]
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: pr-test-and-coverage
+          path: ./artifacts
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./artifacts/coverage.cobertura.xml
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: false
