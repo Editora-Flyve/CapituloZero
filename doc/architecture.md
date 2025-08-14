@@ -1,100 +1,88 @@
-# CapituloZero - Arquitetura e Guia de Extensão
+# CapituloZero - Arquitetura (Modular Monolith)
 
-## Visão Geral
+## VisÃ£o Geral
+CapituloZero Ã© um monolito modular em .NET 9 (Aspire) que concentra mÃºltiplos contextos de negÃ³cio isolados logicamente (Loja, Autor, Terceiros, Admin) dentro do mesmo processo e banco (por enquanto). A UI (Blazor Server) expÃµe uma loja pÃºblica; apÃ³s login, o usuÃ¡rio pode navegar para outros portais conforme permissÃµes.
 
-O CapituloZero é uma solução modular baseada em .NET 9, composta por múltiplos projetos organizados em camadas, com foco em separação de responsabilidades, extensibilidade e boas práticas de desenvolvimento. O front-end utiliza Blazor Server, enquanto a API segue o padrão minimal API com endpoints modulares.
+Principais objetivos:
+- Evoluir rÃ¡pido sem complexidade inicial de microsserviÃ§os.
+- Facilitar futura extraÃ§Ã£o de contextos (boundary claro hoje = serviÃ§o independente amanhÃ£).
+- Reutilizar infraestrutura (observabilidade, auth, persistence) com baixo acoplamento entre domÃ­nios.
 
----
+## Camadas (Horizontais)
+- SharedKernel: Primitivos (`Entity`, `Result`, `Error`, eventos, value objects futuros).
+- Domain: Modelo puro + eventos + erros, organizado por contexto (`Domain/Autores`, `Domain/Loja`).
+- Application: Casos de uso (Commands / Queries / Handlers / Validators / Decorators) segregados por contexto.
+- Infrastructure: EF Core (`ApplicationDbContext`), auth JWT, permissÃµes, dispatcher de domain events, serviÃ§os tÃ©cnicos.
+- Web.Api: Minimal API modular (endereÃ§os HTTP -> Commands/Queries) via interface `IEndpoint` e reflexÃ£o.
+- Web: Blazor Server (componentes por contexto em `Components/<Contexto>`).
+- AppHost / ServiceDefaults: Aspire (telemetria, service discovery, resiliency policies) para orquestraÃ§Ã£o local.
 
-## Estrutura de Projetos
+## Contextos (Verticais Planejados)
+- Loja: catÃ¡logo, carrinho, pedidos, prÃ©â€‘vendas.
+- Autor: submissÃ£o de livros, relatÃ³rios, royalties.
+- Terceiros: kanban de tarefas, pagamentos, contratos.
+- Admin: gestÃ£o de prÃ©â€‘vendas, loja, finanÃ§as, estoque, etiquetas.
 
-- **CapituloZero.Web**: Aplicação Blazor Server (UI).
-- **CapituloZero.Web.Api**: API RESTful, endpoints modulares, autenticação/autorização, health checks, Swagger.
-- **CapituloZero.Application**: Camada de aplicação, orquestra lógica de negócio, comandos, queries, handlers, validação e logging.
-- **CapituloZero.Domain**: Entidades de domínio, eventos de domínio, regras de negócio.
-- **CapituloZero.Infrastructure**: Persistência (EF Core), autenticação, autorização, serviços de infraestrutura.
-- **CapituloZero.ServiceDefaults**: Configurações compartilhadas de telemetria, resiliência, service discovery.
-- **CapituloZero.SharedKernel**: Utilitários e contratos compartilhados.
+Cada contexto agrega seu domÃ­nio + aplicaÃ§Ã£o; evitar uso direto de entidades de outro contexto. Se precisar interagir, usar IDs ou (futuramente) eventos de integraÃ§Ã£o.
 
----
+## PadrÃµes-Chave
+- CQRS: `XCommand : ICommand<T>` / `XQuery : IQuery<T>` + handlers internos selados retornando `Result`.
+- Result Pattern: Falhas de negÃ³cio nunca lanÃ§am exceÃ§Ã£oâ€”retornar `Result.Failure(Error)` com `ErrorType` adequado.
+- Domain Events: Acumulados em `Entity.DomainEvents`; publicados APÃ“S `SaveChangesAsync` (eventual consistency, exigir idempotÃªncia de handlers).
+- Decorators: ValidaÃ§Ã£o (FluentValidation) antes de Logging (Serilog). Ordem preservada em `AddApplication`.
+- Endpoints: Uma classe por feature implementando `IEndpoint`. Roteamento definido dentro de `MapEndpoint`. Sempre mapear `Result` -> HTTP via `result.Match(Results.Ok|NoContent, CustomResults.Problem)`.
 
-## Padrões Arquiteturais
+## ConvenÃ§Ãµes de Nomenclatura (Bilingue)
+- Verbos/palavras tÃ©cnicas em inglÃªs; substantivos de domÃ­nio em portuguÃªs: `GetAutorQuery`, `CreatePreVendaCommand`, `AutorRelatorioResponse`.
+- Pastas/arquivos: PascalCase. Agregados em singular (`Autor`, `Pedido`).
+- CÃ³digos de erro prefixando contexto: `Autores.NotFound`, `Loja.CarrinhoVazio`.
+- DTOs de resposta terminam em `Response`.
 
-- **CQRS (Command Query Responsibility Segregation)**: Separação clara entre comandos (escrita) e queries (leitura), com handlers específicos para cada operação.
-- **Domain Events**: Eventos de domínio são disparados pelas entidades e processados após persistência.
-- **Decorators**: Handlers de comandos e queries são decorados para adicionar validação (FluentValidation) e logging (Serilog).
-- **Injeção de Dependências**: Serviços, handlers, validadores e contextos são registrados via métodos de extensão (`AddApplication`, `AddInfrastructure`, `AddPresentation`).
+## Fluxo Para Nova Feature
+1. Domain: `Domain/<Contexto>/<Aggregate>/<Aggregate>.cs` + erros + eventos.
+2. Application: `Application/<Contexto>/<Feature>/` (Command/Query + Handler + Validator + Response DTO se necessÃ¡rio).
+3. Infrastructure: adicionar DbSet + configuration + migration (somente se persistido).
+4. API: `Web.Api/Endpoints/<Contexto>/<Feature>.cs` implementando `IEndpoint`.
+5. UI: componente Razor em `Web/Components/<Contexto>/<Feature>.razor` consumindo endpoint.
 
----
+## PersistÃªncia
+- Ãšnico `ApplicationDbContext` (monolito modular). Futuro split implica extrair parte do modelo + migrations.
+- Naming: `UseSnakeCaseNamingConvention`; schema padrÃ£o `Schemas.Default`.
+- Migrations (gerar no projeto Infrastructure com startup Web.Api):
+	- Add: `dotnet ef migrations add <Name> --project src/CapituloZero.Infrastructure --startup-project src/CapituloZero.Web.Api -c ApplicationDbContext`
+	- Update: `dotnet ef database update --project src/CapituloZero.Infrastructure --startup-project src/CapituloZero.Web.Api -c ApplicationDbContext`
+- MigraÃ§Ãµes auto aplicadas em Development via `app.ApplyMigrations()`.
 
-## Como Criar Novos Módulos e Funcionalidades
+## AutenticaÃ§Ã£o & AutorizaÃ§Ã£o
+- JWT (config: `Jwt:Secret|Issuer|Audience`).
+- `IUserContext` injeta identidade para validar ownership (exemplo em criaÃ§Ã£o de Todo).
+- `.HasPermission("Contexto.AÃ§Ã£o")` preparado para granularidade futura (permissÃµes personalizadas).
 
-### 1. Domínio
+## Logging & Observability
+- Serilog estruturado + decorators de handlers para tracing de sucesso/falha.
+- Aspire + OpenTelemetry jÃ¡ referenciados; preferir adicionar instrumentaÃ§Ã£o via extensÃµes existentes.
 
-- Crie entidades no projeto `CapituloZero.Domain`.
-- Defina eventos de domínio, enums e regras de negócio.
+## Testes
+- Projetos de teste scaffold: priorizar testes de handlers (Application) com contexto em memÃ³ria ou Testcontainers posteriormente.
+- Futuro: Architecture tests para reforÃ§ar ausÃªncia de dependÃªncias proibidas (Domain -> Infrastructure/Web).
 
-### 2. Application (Comandos, Queries, Handlers)
+## Salvaguardas Arquiteturais
+- NÃ£o antecipar microserviÃ§os: manter limites claros e dependÃªncias mÃ­nimas.
+- NÃ£o mover publicaÃ§Ã£o de domain events para antes do commit sem justificativa de consistÃªncia imediata.
+- Evitar serviÃ§os god/mega-handlers: dividir por caso de uso.
+- Para bibliotecas externas: preferir pacotes ativos / recomendados Microsoft (ex: Polly, System.Text.Json, etc.).
 
-- Crie comandos (`ICommand`/`ICommand<TResponse>`) e queries (`IQuery<TResponse>`) em subpastas temáticas.
-- Implemente handlers para comandos (`ICommandHandler<>`) e queries (`IQueryHandler<>`).
-- Adicione validadores usando FluentValidation.
-- Handlers são registrados automaticamente via assembly scanning.
+## Exemplo: Registrar Autor
+Domain: `Autor` + `AutorRegistradoDomainEvent`.
+Application: `RegisterAutorCommand`, handler valida e levanta evento.
+Infrastructure: adiciona DbSet `Autores`; criar migration.
+API: `Endpoints/Autor/Register.cs` -> POST `/autores` -> retorna `Result<Guid>`.
+UI: FormulÃ¡rio Razor publica comando via HttpClient.
 
-### 3. Infraestrutura
-
-- Configure persistência no `ApplicationDbContext` (DbSets, configurações).
-- Implemente serviços de infraestrutura (ex: autenticação, autorização, providers).
-- Registre dependências em `DependencyInjection.cs`.
-
-### 4. API (Endpoints)
-
-- Crie endpoints implementando a interface `IEndpoint` no projeto `CapituloZero.Web.Api`.
-- Utilize injeção de dependências para acessar handlers de comandos/queries.
-- Mapeie endpoints em `MapEndpoint(IEndpointRouteBuilder app)`.
-
-### 5. Blazor (UI)
-
-- Crie componentes Razor em `CapituloZero.Web\Components`.
-- Consuma APIs via HttpClient (ex: `WeatherApiClient`).
-- Utilize diretivas como `@inject` para acessar serviços.
-
----
-
-## Exemplo de Fluxo para Nova Funcionalidade
-
-1. **Domínio**: Adicione entidade e evento.
-2. **Application**: Crie comando/query, handler e validador.
-3. **Infraestrutura**: Atualize o DbContext e configurações.
-4. **API**: Implemente endpoint e mapeamento.
-5. **Blazor**: Crie componente para consumir e exibir dados.
-
----
-
-## Convenções
-
-- **Handlers**: Nomeados como `XxxCommandHandler` ou `XxxQueryHandler`.
-- **Endpoints**: Nomeados pelo recurso e ação (ex: `Todos/Create.cs`).
-- **Validação**: Sempre via FluentValidation.
-- **Logging**: Automático via decorators.
-- **Domain Events**: Disparados nas entidades, processados após `SaveChangesAsync`.
-
----
-
-## Extensibilidade
-
-- Novos módulos seguem a estrutura de pastas e padrões existentes.
-- Basta criar as classes e interfaces necessárias; o assembly scanning e DI cuidam do registro.
-- Para novos serviços de infraestrutura, adicione métodos de extensão em `DependencyInjection.cs`.
+## Roteiro de EvoluÃ§Ã£o Futura
+- Introduzir eventos de integraÃ§Ã£o para comunicaÃ§Ã£o cross-context sem acoplamento.
+- Adicionar permissionamento granular e feature flags por contexto.
+- Externalizar contextos de alta escala (ex: Loja) primeiro se necessÃ¡rio.
 
 ---
-
-## Observações
-
-- O sistema é altamente modular e desacoplado.
-- O uso de decorators permite adicionar cross-cutting concerns sem poluir handlers.
-- A arquitetura facilita testes, manutenção e evolução.
-
----
-
-Este guia serve como referência para criação e extensão de módulos e funcionalidades no CapituloZero.
+Este documento guia a evoluÃ§Ã£o incremental segura do monolito modular.
