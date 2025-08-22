@@ -2,8 +2,6 @@
 using System.Text;
 using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.Domain.Users;
-using CapituloZero.Infrastructure.Usuarios;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -11,46 +9,35 @@ using Microsoft.IdentityModel.Tokens;
 namespace CapituloZero.Infrastructure.Authentication;
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes - instantiated by DI container
 
-internal sealed class TokenProvider(IConfiguration configuration, UserManager<ApplicationUser> userManager) : ITokenProvider
+internal sealed class TokenProvider(IConfiguration configuration) : ITokenProvider
 {
     public string Create(User user)
     {
         // Backwards compat mapping path not used by new Identity flow; keep for interface
-        return CreateInternal(user.Id, user.Email);
+        return Create(user.Id, user.Email, Array.Empty<string>());
     }
 
-    private string CreateInternal(Guid userId, string email)
+    public string Create(Guid userId, string email, IEnumerable<string> roles)
     {
         string secretKey = configuration["Jwt:Secret"]!;
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        // Try fetch roles if we have the ApplicationUser
+        // Include basic claims and provided role claims
         List<Claim> claims = new()
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email)
         };
 
-        try
+        var roleList = roles?.ToList() ?? [];
+        foreach (var role in roleList)
         {
-            var appUser = userManager.Users.FirstOrDefault(u => u.Id == userId);
-            if (appUser is not null)
-            {
-                var roles = userManager.GetRolesAsync(appUser).GetAwaiter().GetResult();
-                if (roles is not null)
-                {
-                    foreach (var role in roles)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, role));
-                    }
-                    claims.Add(new Claim("cz:user_types", string.Join(' ', roles)));
-                }
-            }
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
-    catch (InvalidOperationException)
+        if (roleList.Count > 0)
         {
-            // ignore role enrichment failures
+            claims.Add(new Claim("cz:user_types", string.Join(' ', roleList)));
         }
 
         var tokenDescriptor = new SecurityTokenDescriptor

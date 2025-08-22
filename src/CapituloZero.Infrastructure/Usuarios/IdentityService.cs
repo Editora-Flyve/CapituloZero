@@ -54,15 +54,9 @@ internal sealed class IdentityService(
             return Result.Failure<string>(Error.Problem("Usuarios.InvalidCredentials", "Invalid email or password"));
         }
 
-        var token = CreateToken(user);
+    var roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
+    var token = tokenProvider.Create(user.Id, user.Email!, roles);
         return token;
-    }
-
-    private string CreateToken(ApplicationUser user)
-    {
-        // Leverage TokenProvider’s internal Create that enriches roles via UserManager
-        var tmp = new CapituloZero.Domain.Users.User { Id = user.Id, Email = user.Email!, FirstName = user.FirstName, LastName = user.LastName };
-        return tokenProvider.Create(tmp);
     }
 
     public async Task<Result<CapituloZero.Application.Users.GetById.UserResponse>> GetByIdAsync(Guid id, Guid currentUserId, CancellationToken ct = default)
