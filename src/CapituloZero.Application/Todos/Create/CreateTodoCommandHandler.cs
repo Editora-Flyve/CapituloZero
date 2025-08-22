@@ -3,7 +3,6 @@ using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Domain.Todos;
 using CapituloZero.Domain.Users;
-using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Application.Todos.Create;
@@ -21,17 +20,9 @@ internal sealed class CreateTodoCommandHandler(
             return Result.Failure<Guid>(UserErrors.Unauthorized());
         }
 
-        User? user = await context.Users.AsNoTracking()
-            .SingleOrDefaultAsync(u => u.Id == command.UserId, cancellationToken).ConfigureAwait(false);
-
-        if (user is null)
-        {
-            return Result.Failure<Guid>(UserErrors.NotFound(command.UserId));
-        }
-
         var todoItem = new TodoItem
         {
-            UserId = user.Id,
+            UserId = command.UserId,
             Description = command.Description,
             Priority = command.Priority,
             DueDate = command.DueDate,

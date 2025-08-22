@@ -1,11 +1,11 @@
-﻿using CapituloZero.SharedKernel;
+﻿namespace CapituloZero.Domain.Users;
 
-namespace CapituloZero.Domain.Users;
-
-public sealed class User : Entity
+// Lightweight User DTO retained for JWT token creation compatibility.
+public sealed class User
 {
-    public string Email { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string PasswordHash { get; set; }
+    public Guid Id { get; set; }
+    public string Email { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
+    public string PasswordHash { get; set; } = string.Empty;
 }
