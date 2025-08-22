@@ -1,4 +1,5 @@
 ﻿using CapituloZero.Application.Abstractions.Messaging;
+using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.Application.Todos.Create;
 using CapituloZero.Domain.Todos;
 using CapituloZero.SharedKernel;
@@ -12,8 +13,7 @@ internal sealed class Create : IEndpoint
 {
     internal sealed class Request
     {
-        public Guid UserId { get; set; }
-    public string Description { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public DateTime? DueDate { get; set; }
         public List<string> Labels { get; set; } = [];
         public int Priority { get; set; }
@@ -23,12 +23,13 @@ internal sealed class Create : IEndpoint
     {
         app.MapPost("todos", async (
             Request request,
+            IUserContext current,
             ICommandHandler<CreateTodoCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new CreateTodoCommand
             {
-                UserId = request.UserId,
+                UserId = (UserId)current.UserId,
                 Description = request.Description,
                 DueDate = request.DueDate,
                 Labels = request.Labels,

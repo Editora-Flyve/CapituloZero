@@ -1,4 +1,5 @@
 ﻿using CapituloZero.Application.Abstractions.Messaging;
+using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.Application.Todos.Get;
 using CapituloZero.SharedKernel;
 using CapituloZero.Web.Api.Extensions;
@@ -11,11 +12,11 @@ internal sealed class Get : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("todos", async (
-            Guid userId,
+            IUserContext current,
             IQueryHandler<GetTodosQuery, List<TodoResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetTodosQuery(userId);
+            var query = new GetTodosQuery((UserId)current.UserId);
 
             Result<List<TodoResponse>> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
 
