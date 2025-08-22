@@ -32,11 +32,21 @@ Cada contexto agrega seu domínio + aplicação; evitar uso direto de entidades 
 - Decorators: Validação (FluentValidation) antes de Logging (Serilog). Ordem preservada em `AddApplication`.
 - Endpoints: Uma classe por feature implementando `IEndpoint`. Roteamento definido dentro de `MapEndpoint`. Sempre mapear `Result` -> HTTP via `result.Match(Results.Ok|NoContent, CustomResults.Problem)`.
 
-## Convenções de Nomenclatura (Bilingue)
+## Convenções de Módulo e Nomenclatura (consistência)
+- Organização por feature em todas as camadas (vertical):
+	- Domain: `Domain/<Contexto>/<Aggregate>/...`
+	- Application: `Application/<Contexto>/<Feature>/...`
+	- Infrastructure: `Infrastructure/<Contexto|AreaTecnica>/<Feature|Config>/...`
+	- Web.Api: `Web.Api/Endpoints/<Contexto>/<Feature>.cs`
 - Verbos/palavras técnicas em inglês; substantivos de domínio em português: `GetAutorQuery`, `CreatePreVendaCommand`, `AutorRelatorioResponse`.
 - Pastas/arquivos: PascalCase. Agregados em singular (`Autor`, `Pedido`).
-- Códigos de erro prefixando contexto: `Autores.NotFound`, `Loja.CarrinhoVazio`.
+- Códigos de erro prefixam contexto/área em inglês quando cross-cutting: ex. `Users.NotFound`, `Users.Unauthorized`; para domínio, prefira contexto: `Autores.NotFound`.
 - DTOs de resposta terminam em `Response`.
+- Identity/Users na infraestrutura padronizado em inglês: pasta/namespace `Infrastructure.Users`.
+- Schemas de banco:
+	- Padrão: `public` (Schemas.Default)
+	- Identity: `users` (Schemas.Users)
+- SharedKernel Value Objects: preferir ValueObjects para IDs cross-context, ex.: `UserId` com conversões implícitas para `Guid`.
 
 ## Fluxo Para Nova Feature
 1. Domain: `Domain/<Contexto>/<Aggregate>/<Aggregate>.cs` + erros + eventos.

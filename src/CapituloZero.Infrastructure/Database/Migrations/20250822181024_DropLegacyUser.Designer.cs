@@ -114,7 +114,7 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("user", "public");
                 });
 
-            modelBuilder.Entity("CapituloZero.Infrastructure.Usuarios.ApplicationRole", b =>
+            modelBuilder.Entity("CapituloZero.Infrastructure.Users.ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

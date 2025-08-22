@@ -35,6 +35,6 @@ public class IdentityFlowTests
         var otherId = Guid.NewGuid();
         var got = await identity.GetByIdAsync(userId.Value, otherId);
         got.IsFailure.ShouldBeTrue();
-        got.Error.Code.ShouldBe("Usuarios.Unauthorized");
+    got.Error.Code.ShouldBe("Users.Unauthorized");
     }
 }

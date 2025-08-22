@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
 
-namespace CapituloZero.Infrastructure.Usuarios;
+namespace CapituloZero.Infrastructure.Users;
 
 internal sealed class IdentityService(
     UserManager<ApplicationUser> userManager,
@@ -29,7 +29,7 @@ internal sealed class IdentityService(
         var created = await userManager.CreateAsync(user, password).ConfigureAwait(false);
         if (!created.Succeeded)
         {
-            return Result.Failure<Guid>(Error.Problem("Usuarios.CreateFailed", string.Join(';', created.Errors.Select(e => e.Description))));
+            return Result.Failure<Guid>(Error.Problem("Users.CreateFailed", string.Join(';', created.Errors.Select(e => e.Description))));
         }
 
         // Ensure Default role exists
@@ -47,11 +47,11 @@ internal sealed class IdentityService(
         var user = await userManager.Users.SingleOrDefaultAsync(u => u.Email == email, ct).ConfigureAwait(false);
         if (user is null)
         {
-            return Result.Failure<string>(Error.NotFound("Usuarios.NotFoundByEmail", "User not found"));
+            return Result.Failure<string>(Error.NotFound("Users.NotFoundByEmail", "User not found"));
         }
         if (!await userManager.CheckPasswordAsync(user, password).ConfigureAwait(false))
         {
-            return Result.Failure<string>(Error.Problem("Usuarios.InvalidCredentials", "Invalid email or password"));
+            return Result.Failure<string>(Error.Problem("Users.InvalidCredentials", "Invalid email or password"));
         }
 
     var roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
@@ -63,17 +63,17 @@ internal sealed class IdentityService(
     {
         if (id != currentUserId)
         {
-            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.Problem("Usuarios.Unauthorized", "You cannot access another user."));
+            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.Problem("Users.Unauthorized", "You cannot access another user."));
         }
         var user = await userManager.Users.Where(u => u.Id == id).Select(u => new { u.Id, u.FirstName, u.LastName, u.Email }).SingleOrDefaultAsync(ct).ConfigureAwait(false);
         if (user is null)
         {
-            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.NotFound("Usuarios.NotFound", "User not found"));
+            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.NotFound("Users.NotFound", "User not found"));
         }
         var entity = await userManager.FindByIdAsync(user.Id.ToString()).ConfigureAwait(false);
         if (entity is null)
         {
-            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.NotFound("Usuarios.NotFound", "User not found"));
+            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.NotFound("Users.NotFound", "User not found"));
         }
         var roles = await userManager.GetRolesAsync(entity).ConfigureAwait(false);
         var response = new CapituloZero.Application.Users.GetById.UserResponse
@@ -92,16 +92,16 @@ internal sealed class IdentityService(
         var user = await userManager.Users.Where(u => u.Email == email).Select(u => new { u.Id, u.FirstName, u.LastName, u.Email }).SingleOrDefaultAsync(ct).ConfigureAwait(false);
         if (user is null)
         {
-            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.NotFound("Usuarios.NotFoundByEmail", "User not found"));
+            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.NotFound("Users.NotFoundByEmail", "User not found"));
         }
         if (user.Id != currentUserId)
         {
-            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.Problem("Usuarios.Unauthorized", "You cannot access another user."));
+            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.Problem("Users.Unauthorized", "You cannot access another user."));
         }
         var entity = await userManager.FindByIdAsync(user.Id.ToString()).ConfigureAwait(false);
         if (entity is null)
         {
-            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.NotFound("Usuarios.NotFoundByEmail", "User not found"));
+            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.NotFound("Users.NotFoundByEmail", "User not found"));
         }
         var roles = await userManager.GetRolesAsync(entity).ConfigureAwait(false);
         var response = new CapituloZero.Application.Users.GetByEmail.UserResponse
@@ -120,14 +120,14 @@ internal sealed class IdentityService(
         var user = await userManager.FindByIdAsync(userId.ToString()).ConfigureAwait(false);
         if (user is null)
         {
-            return Result.Failure(Error.NotFound("Usuarios.NotFound", "User not found"));
+            return Result.Failure(Error.NotFound("Users.NotFound", "User not found"));
         }
         var distinct = tipos.Select(t => t.Trim()).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         foreach (var tipo in distinct)
         {
             if (!UserTypes.Allowed.Contains(tipo))
             {
-                return Result.Failure(Error.Problem("Usuarios.TipoInvalido", $"Tipo inválido: {tipo}"));
+                return Result.Failure(Error.Problem("Users.InvalidType", $"Invalid type: {tipo}"));
             }
             if (!await roleManager.RoleExistsAsync(tipo).ConfigureAwait(false))
             {
@@ -145,7 +145,7 @@ internal sealed class IdentityService(
             var result = await userManager.AddToRolesAsync(user, toAssign).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return Result.Failure(Error.Problem("Usuarios.AssignRolesFailed", string.Join(';', result.Errors.Select(e => e.Description))));
+                return Result.Failure(Error.Problem("Users.AssignRolesFailed", string.Join(';', result.Errors.Select(e => e.Description))));
             }
         }
         return Result.Success();

@@ -3,7 +3,7 @@ using CapituloZero.Infrastructure.DomainEvents;
 using CapituloZero.Domain.Todos;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
-using CapituloZero.Infrastructure.Usuarios;
+using CapituloZero.Infrastructure.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
@@ -18,23 +18,24 @@ public sealed class ApplicationDbContext(
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         base.OnModelCreating(builder);
 
-    ArgumentNullException.ThrowIfNull(builder);
-
+        // apply entity configurations
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
         builder.HasDefaultSchema(Schemas.Default);
 
-        // Map Identity tables to the usuarios schema with snake_case names
+        // Map Identity tables to the users schema with snake_case names
         builder.Entity<ApplicationUser>(b =>
         {
-            b.ToTable("users", Schemas.Usuarios);
+            b.ToTable("users", Schemas.Users);
         });
 
         builder.Entity<ApplicationRole>(b =>
         {
-            b.ToTable("roles", Schemas.Usuarios);
+            b.ToTable("roles", Schemas.Users);
             b.HasData(
                 new ApplicationRole { Id = UserTypeIds.Default, Name = UserTypes.Default, NormalizedName = UserTypes.Default.ToUpperInvariant(), ConcurrencyStamp = "seed" },
                 new ApplicationRole { Id = UserTypeIds.Autor, Name = UserTypes.Autor, NormalizedName = UserTypes.Autor.ToUpperInvariant(), ConcurrencyStamp = "seed" },
@@ -45,27 +46,27 @@ public sealed class ApplicationDbContext(
 
         builder.Entity<IdentityUserRole<Guid>>(b =>
         {
-            b.ToTable("user_roles", Schemas.Usuarios);
+            b.ToTable("user_roles", Schemas.Users);
         });
 
         builder.Entity<IdentityUserClaim<Guid>>(b =>
         {
-            b.ToTable("user_claims", Schemas.Usuarios);
+            b.ToTable("user_claims", Schemas.Users);
         });
 
         builder.Entity<IdentityUserLogin<Guid>>(b =>
         {
-            b.ToTable("user_logins", Schemas.Usuarios);
+            b.ToTable("user_logins", Schemas.Users);
         });
 
         builder.Entity<IdentityRoleClaim<Guid>>(b =>
         {
-            b.ToTable("role_claims", Schemas.Usuarios);
+            b.ToTable("role_claims", Schemas.Users);
         });
 
         builder.Entity<IdentityUserToken<Guid>>(b =>
         {
-            b.ToTable("user_tokens", Schemas.Usuarios);
+            b.ToTable("user_tokens", Schemas.Users);
         });
     }
 

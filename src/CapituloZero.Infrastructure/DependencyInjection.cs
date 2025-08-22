@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using CapituloZero.SharedKernel;
-using CapituloZero.Infrastructure.Usuarios;
+using CapituloZero.Infrastructure.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace CapituloZero.Infrastructure;
@@ -84,7 +84,7 @@ public static class InfrastructureRegistrar
         services.AddHttpContextAccessor();
     services.AddScoped<IUserContext, UserContext>();
     services.AddScoped<ITokenProvider, TokenProvider>();
-    services.AddScoped<CapituloZero.Application.Abstractions.Authentication.IIdentityService, CapituloZero.Infrastructure.Usuarios.IdentityService>();
+    services.AddScoped<CapituloZero.Application.Abstractions.Authentication.IIdentityService, CapituloZero.Infrastructure.Users.IdentityService>();
 
         // ASP.NET Core Identity (no cookies)
         services

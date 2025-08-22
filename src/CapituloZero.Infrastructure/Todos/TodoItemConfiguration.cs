@@ -1,7 +1,8 @@
 ﻿using CapituloZero.Domain.Todos;
-using CapituloZero.Infrastructure.Usuarios;
+using CapituloZero.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Infrastructure.Todos;
 
@@ -13,6 +14,13 @@ internal sealed class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 
         builder.Property(t => t.DueDate).HasConversion(d => d != null ? DateTime.SpecifyKind(d.Value, DateTimeKind.Utc) : d, v => v);
 
-    builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(t => t.UserId);
+        // Map UserId (Value Object) <-> Guid (uuid) with conversion
+        builder.Property(t => t.UserId)
+            .HasConversion(id => (Guid)id, value => (UserId)value)
+            .HasColumnType("uuid")
+            .IsRequired();
+
+    // Avoid direct FK to Identity user (cross-context). Keep an index for queries instead.
+    builder.HasIndex(t => t.UserId);
     }
 }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace CapituloZero.Infrastructure.Usuarios;
+namespace CapituloZero.Infrastructure.Users;
 
 public sealed class ApplicationUser : IdentityUser<Guid>
 {

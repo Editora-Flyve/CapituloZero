@@ -1,11 +1,12 @@
 ﻿using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Domain.Todos;
+using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Application.Todos.Create;
 
 public sealed class CreateTodoCommand : ICommand<Guid>
 {
-    public Guid UserId { get; set; }
+    public UserId UserId { get; set; }
     public string Description { get; set; }
     public DateTime? DueDate { get; set; }
     public List<string> Labels { get; set; } = [];

@@ -1,4 +1,4 @@
-namespace CapituloZero.Infrastructure.Usuarios;
+namespace CapituloZero.Infrastructure.Users;
 
 public static class UserTypes
 {

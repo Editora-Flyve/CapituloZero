@@ -1,8 +1,9 @@
 using System.Text;
 using CapituloZero.Application.Abstractions.Authentication;
+using CapituloZero.Application;
 using CapituloZero.Infrastructure.Authentication;
 using CapituloZero.Infrastructure.Database;
-using CapituloZero.Infrastructure.Usuarios;
+using CapituloZero.Infrastructure.Users;
 using CapituloZero.Infrastructure.DomainEvents;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,9 @@ internal static class TestHost
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager();
+
+    // Application layer (CQRS handlers, validators, decorators)
+    services.AddApplication();
 
         // Abstractions
         services.AddScoped<ITokenProvider, TokenProvider>();
