@@ -1,4 +1,5 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using CapituloZero.Web.Components.Usuarios
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">CapituloZero.Web.Api</a>
     </div>
@@ -25,5 +26,9 @@
                 <span class="bi bi-list-nested" aria-hidden="true"></span> Weather
             </NavLink>
         </div>
+
+    <div class="nav-item px-3 mt-4">
+    <UserMenu />
+    </div>
     </nav>
 </div>
