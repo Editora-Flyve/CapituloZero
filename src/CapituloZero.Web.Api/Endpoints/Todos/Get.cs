@@ -17,7 +17,7 @@ internal sealed class Get : IEndpoint
         {
             var query = new GetTodosQuery(userId);
 
-            Result<List<TodoResponse>> result = await handler.Handle(query, cancellationToken);
+            Result<List<TodoResponse>> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

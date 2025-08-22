@@ -10,10 +10,10 @@ namespace CapituloZero.Web.Api.Endpoints.Todos;
 
 internal sealed class Create : IEndpoint
 {
-    public sealed class Request
+    internal sealed class Request
     {
         public Guid UserId { get; set; }
-        public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
         public DateTime? DueDate { get; set; }
         public List<string> Labels { get; set; } = [];
         public int Priority { get; set; }
@@ -35,7 +35,7 @@ internal sealed class Create : IEndpoint
                 Priority = (Priority)request.Priority
             };
 
-            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

@@ -17,7 +17,7 @@ internal sealed class GetById : IEndpoint
         {
             var query = new GetUserByIdQuery(userId);
 
-            Result<UserResponse> result = await handler.Handle(query, cancellationToken);
+            Result<UserResponse> result = await handler.Handle(query, cancellationToken).ConfigureAwait(false);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

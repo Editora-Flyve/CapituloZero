@@ -8,7 +8,7 @@ namespace CapituloZero.Web.Api.Endpoints.Users;
 
 internal sealed class Register : IEndpoint
 {
-    public sealed record Request(string Email, string FirstName, string LastName, string Password);
+    internal sealed record Request(string Email, string FirstName, string LastName, string Password);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -23,7 +23,7 @@ internal sealed class Register : IEndpoint
                 request.LastName,
                 request.Password);
 
-            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken).ConfigureAwait(false);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
