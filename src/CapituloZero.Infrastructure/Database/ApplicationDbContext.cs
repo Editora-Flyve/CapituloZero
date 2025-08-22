@@ -1,7 +1,6 @@
 ﻿using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Infrastructure.DomainEvents;
 using CapituloZero.Domain.Todos;
-using CapituloZero.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
 using CapituloZero.Infrastructure.Usuarios;

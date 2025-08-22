@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Domain.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -11,12 +10,6 @@ namespace CapituloZero.Infrastructure.Authentication;
 
 internal sealed class TokenProvider(IConfiguration configuration) : ITokenProvider
 {
-    public string Create(User user)
-    {
-        // Backwards compat mapping path not used by new Identity flow; keep for interface
-        return Create(user.Id, user.Email, Array.Empty<string>());
-    }
-
     public string Create(Guid userId, string email, IEnumerable<string> roles)
     {
         string secretKey = configuration["Jwt:Secret"]!;

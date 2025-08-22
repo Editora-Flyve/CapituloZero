@@ -65,29 +65,31 @@ internal sealed class IdentityService(
         {
             return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.Problem("Usuarios.Unauthorized", "You cannot access another user."));
         }
-        var user = await userManager.Users.Where(u => u.Id == id).Select(u => new CapituloZero.Application.Users.GetById.UserResponse
-        {
-            Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            Email = u.Email!
-        }).SingleOrDefaultAsync(ct).ConfigureAwait(false);
+        var user = await userManager.Users.Where(u => u.Id == id).Select(u => new { u.Id, u.FirstName, u.LastName, u.Email }).SingleOrDefaultAsync(ct).ConfigureAwait(false);
         if (user is null)
         {
             return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.NotFound("Usuarios.NotFound", "User not found"));
         }
-        return user;
+        var entity = await userManager.FindByIdAsync(user.Id.ToString()).ConfigureAwait(false);
+        if (entity is null)
+        {
+            return Result.Failure<CapituloZero.Application.Users.GetById.UserResponse>(Error.NotFound("Usuarios.NotFound", "User not found"));
+        }
+        var roles = await userManager.GetRolesAsync(entity).ConfigureAwait(false);
+        var response = new CapituloZero.Application.Users.GetById.UserResponse
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email!,
+            Tipos = roles.ToList()
+        };
+        return response;
     }
 
     public async Task<Result<CapituloZero.Application.Users.GetByEmail.UserResponse>> GetByEmailAsync(string email, Guid currentUserId, CancellationToken ct = default)
     {
-        var user = await userManager.Users.Where(u => u.Email == email).Select(u => new CapituloZero.Application.Users.GetByEmail.UserResponse
-        {
-            Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            Email = u.Email!
-        }).SingleOrDefaultAsync(ct).ConfigureAwait(false);
+        var user = await userManager.Users.Where(u => u.Email == email).Select(u => new { u.Id, u.FirstName, u.LastName, u.Email }).SingleOrDefaultAsync(ct).ConfigureAwait(false);
         if (user is null)
         {
             return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.NotFound("Usuarios.NotFoundByEmail", "User not found"));
@@ -96,7 +98,21 @@ internal sealed class IdentityService(
         {
             return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.Problem("Usuarios.Unauthorized", "You cannot access another user."));
         }
-        return user;
+        var entity = await userManager.FindByIdAsync(user.Id.ToString()).ConfigureAwait(false);
+        if (entity is null)
+        {
+            return Result.Failure<CapituloZero.Application.Users.GetByEmail.UserResponse>(Error.NotFound("Usuarios.NotFoundByEmail", "User not found"));
+        }
+        var roles = await userManager.GetRolesAsync(entity).ConfigureAwait(false);
+        var response = new CapituloZero.Application.Users.GetByEmail.UserResponse
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email!,
+            Tipos = roles.ToList()
+        };
+        return response;
     }
 
     public async Task<Result> AddUserTypesAsync(Guid userId, IEnumerable<string> tipos, CancellationToken ct = default)
