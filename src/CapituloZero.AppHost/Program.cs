@@ -1,7 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresdb = builder.AddPostgres("postgres")
-                      .WithPgAdmin()
+                      .WithPgWeb()
                       .WithDataVolume(isReadOnly: false)
                       .AddDatabase("postgresdb");
 
