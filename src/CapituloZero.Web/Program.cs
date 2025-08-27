@@ -1,8 +1,6 @@
 using CapituloZero.Web;
 using CapituloZero.ServiceDefaults;
 using CapituloZero.Web.Components;
-using CapituloZero.Web.Auth;
-using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +11,6 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Auth state + token store
-builder.Services.AddScoped<ITokenStore, InMemoryTokenStore>();
-builder.Services.AddTransient<AuthHeaderHandler>();
-builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
-builder.Services.AddAuthorizationCore();
-
 builder.Services.AddOutputCache();
 
 builder.Services.AddHttpClient<WeatherApiClient>(client =>
@@ -27,13 +19,6 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
         // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
         client.BaseAddress = new("https+http://api");
     });
-
-// API HttpClient for UI calls
-builder.Services.AddHttpClient("Api", client =>
-    {
-        client.BaseAddress = new("https+http://api");
-    })
-    .AddHttpMessageHandler<AuthHeaderHandler>();
 
 var app = builder.Build();
 
