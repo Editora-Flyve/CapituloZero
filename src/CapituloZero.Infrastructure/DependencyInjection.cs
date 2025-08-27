@@ -84,7 +84,7 @@ public static class InfrastructureRegistrar
         services.AddHttpContextAccessor();
     services.AddScoped<IUserContext, UserContext>();
     services.AddScoped<ITokenProvider, TokenProvider>();
-    services.AddScoped<CapituloZero.Application.Abstractions.Authentication.IIdentityService, CapituloZero.Infrastructure.Users.IdentityService>();
+    services.AddScoped<CapituloZero.Application.Abstractions.Authentication.IIdentityService, CapituloZero.Infrastructure.Usuarios.IdentityService>();
 
         // ASP.NET Core Identity (no cookies)
         services

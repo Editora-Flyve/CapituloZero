@@ -5,6 +5,7 @@ using CapituloZero.Infrastructure.Authentication;
 using CapituloZero.Infrastructure.Database;
 using CapituloZero.Infrastructure.Users;
 using CapituloZero.Infrastructure.DomainEvents;
+using CapituloZero.Infrastructure.Usuarios;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

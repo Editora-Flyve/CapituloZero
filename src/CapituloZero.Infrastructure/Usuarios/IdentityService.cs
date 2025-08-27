@@ -1,17 +1,20 @@
 using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Application.Users.GetByEmail;
-using CapituloZero.Application.Users.GetById;
+using CapituloZero.Application.Users.Login;
 using CapituloZero.Infrastructure.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
+using CapituloZero.Domain.Users;
+using CapituloZero.Infrastructure.Users;
+using System.Linq;
 
-namespace CapituloZero.Infrastructure.Users;
+namespace CapituloZero.Infrastructure.Usuarios;
 
 internal sealed class IdentityService(
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
-    ITokenProvider tokenProvider)
+    ITokenProvider tokenProvider,
+    ApplicationDbContext dbContext)
     : IIdentityService
 {
     public async Task<Result<Guid>> RegisterAsync(string email, string firstName, string lastName, string password, CancellationToken ct = default)
@@ -42,21 +45,47 @@ internal sealed class IdentityService(
         return user.Id;
     }
 
-    public async Task<Result<string>> LoginAsync(string email, string password, CancellationToken ct = default)
+    public async Task<Result<LoginResponse>> LoginAsync(string email, string password, CancellationToken ct = default)
     {
         var user = await userManager.Users.SingleOrDefaultAsync(u => u.Email == email, ct).ConfigureAwait(false);
         if (user is null)
         {
-            return Result.Failure<string>(Error.NotFound("Users.NotFoundByEmail", "User not found"));
+            return Result.Failure<LoginResponse>(Error.NotFound("Users.NotFoundByEmail", "User not found"));
         }
         if (!await userManager.CheckPasswordAsync(user, password).ConfigureAwait(false))
         {
-            return Result.Failure<string>(Error.Problem("Users.InvalidCredentials", "Invalid email or password"));
+            return Result.Failure<LoginResponse>(Error.Problem("Users.InvalidCredentials", "Invalid email or password"));
         }
 
-    var roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
-    var token = tokenProvider.Create(user.Id, user.Email!, roles);
-        return token;
+        var roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
+        var accessToken = tokenProvider.Create(user.Id, user.Email!, roles);
+
+        // Revoga refresh tokens antigos ativos para este usuário
+        var activeTokens = await dbContext.RefreshTokens
+            .Where(rt => rt.UserId == user.Id && rt.RevokedAt == null && rt.ExpiresAt > DateTime.UtcNow)
+            .ToListAsync(ct)
+            .ConfigureAwait(false);
+        if (activeTokens.Count > 0)
+        {
+            foreach (var t in activeTokens)
+            {
+                t.RevokedAt = DateTime.UtcNow;
+            }
+        }
+
+        // Geração e persistência do novo refresh token
+        var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+        var refreshTokenEntity = new RefreshToken
+        {
+            UserId = user.Id,
+            Token = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            CreatedAt = DateTime.UtcNow
+        };
+        dbContext.RefreshTokens.Add(refreshTokenEntity);
+        await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     public async Task<Result<CapituloZero.Application.Users.GetById.UserResponse>> GetByIdAsync(Guid id, Guid currentUserId, CancellationToken ct = default)
@@ -149,5 +178,45 @@ internal sealed class IdentityService(
             }
         }
         return Result.Success();
+    }
+
+    public async Task<Result<LoginResponse>> RefreshAsync(string refreshToken, CancellationToken ct = default)
+    {
+        var tokenEntity = await dbContext.RefreshTokens
+            .AsTracking()
+            .FirstOrDefaultAsync(rt => rt.Token == refreshToken && rt.RevokedAt == null && rt.ExpiresAt > DateTime.UtcNow, ct)
+            .ConfigureAwait(false);
+
+        if (tokenEntity is null)
+        {
+            return Result.Failure<LoginResponse>(Error.Problem("Auth.InvalidRefreshToken", "Refresh token inválido ou expirado."));
+        }
+
+        var user = await userManager.FindByIdAsync(tokenEntity.UserId.ToString()).ConfigureAwait(false);
+        if (user is null)
+        {
+            return Result.Failure<LoginResponse>(Error.NotFound("Users.NotFound", "Usuário não encontrado."));
+        }
+
+        // Revoga o token antigo
+        tokenEntity.RevokedAt = DateTime.UtcNow;
+
+        var roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
+        var accessToken = tokenProvider.Create(user.Id, user.Email!, roles);
+
+        // Cria novo refresh token
+        var newRefresh = Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+        var newEntity = new RefreshToken
+        {
+            UserId = user.Id,
+            Token = newRefresh,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            CreatedAt = DateTime.UtcNow
+        };
+        dbContext.RefreshTokens.Add(newEntity);
+
+        await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+
+        return new LoginResponse(accessToken, newRefresh);
     }
 }

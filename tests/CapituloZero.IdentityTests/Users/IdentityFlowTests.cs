@@ -14,13 +14,13 @@ public class IdentityFlowTests
         using var provider = TestHost.Build();
         var identity = provider.GetRequiredService<IIdentityService>();
 
-    var userId = await identity.RegisterAsync("john.doe@test.com", "John", "Doe", "abc123");
+    var userId = await identity.RegisterAsync("john.doe@test.com", "John", "Doe", "Abc123!");
     userId.IsSuccess.ShouldBeTrue(userId.Error?.Description);
         userId.Value.ShouldNotBe(Guid.Empty);
 
-        var token = await identity.LoginAsync("john.doe@test.com", "abc123");
-    token.IsSuccess.ShouldBeTrue(token.Error?.Description);
-        token.Value.ShouldNotBeNullOrWhiteSpace();
+        var token = await identity.LoginAsync("john.doe@test.com", "Abc123!");
+        token.IsSuccess.ShouldBeTrue(token.Error?.Description);
+        token.Value.AccessToken.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class IdentityFlowTests
         using var provider = TestHost.Build();
         var identity = provider.GetRequiredService<IIdentityService>();
 
-    var userId = await identity.RegisterAsync("alice@test.com", "Alice", "Doe", "abc123");
+    var userId = await identity.RegisterAsync("alice@test.com", "Alice", "Doe", "Abc123!");
     userId.IsSuccess.ShouldBeTrue(userId.Error?.Description);
 
         var otherId = Guid.NewGuid();

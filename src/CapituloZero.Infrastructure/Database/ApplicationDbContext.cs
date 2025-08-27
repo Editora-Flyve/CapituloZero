@@ -15,6 +15,7 @@ public sealed class ApplicationDbContext(
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options), IApplicationDbContext
 {
     public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<CapituloZero.Domain.Users.RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -67,6 +68,20 @@ public sealed class ApplicationDbContext(
         builder.Entity<IdentityUserToken<Guid>>(b =>
         {
             b.ToTable("user_tokens", Schemas.Users);
+        });
+
+        builder.Entity<CapituloZero.Domain.Users.RefreshToken>(b =>
+        {
+            b.ToTable("refresh_tokens", Schemas.Users);
+            b.HasKey(rt => rt.Id);
+            b.Property(rt => rt.Token).IsRequired();
+            b.Property(rt => rt.ExpiresAt).IsRequired();
+            b.Property(rt => rt.CreatedAt).IsRequired();
+            b.HasIndex(rt => rt.Token).IsUnique();
+            b.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 
