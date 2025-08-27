@@ -1,6 +1,6 @@
-using CapituloZero.Web.ApiClient.Model;
+using CapituloZero.Web.Components.Weather.Model;
 
-namespace CapituloZero.Web.ApiClient;
+namespace CapituloZero.Web.Components.Weather.ApiClient;
 
 public class WeatherApiClient(HttpClient httpClient)
 {

@@ -1,4 +1,4 @@
-namespace CapituloZero.Web.ApiClient.Model;
+namespace CapituloZero.Web.Components.Weather.Model;
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
