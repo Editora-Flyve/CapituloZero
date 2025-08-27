@@ -1,5 +1,6 @@
 using CapituloZero.Web;
 using CapituloZero.ServiceDefaults;
+using CapituloZero.Web.ApiClient;
 using CapituloZero.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
