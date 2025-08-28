@@ -1,38 +1,14 @@
 ﻿using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Application.Abstractions.Messaging;
-using CapituloZero.Domain.Users;
-using Microsoft.EntityFrameworkCore;
 using CapituloZero.SharedKernel;
 
 namespace CapituloZero.Application.Users.GetById;
 
-internal sealed class GetUserByIdQueryHandler(IApplicationDbContext context, IUserContext userContext)
+internal sealed class GetUserByIdQueryHandler(IIdentityService identityService, IUserContext userContext)
     : IQueryHandler<GetUserByIdQuery, UserResponse>
 {
     public async Task<Result<UserResponse>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
     {
-        if (query.UserId != userContext.UserId)
-        {
-            return Result.Failure<UserResponse>(UserErrors.Unauthorized());
-        }
-
-        UserResponse? user = await context.Users
-            .Where(u => u.Id == query.UserId)
-            .Select(u => new UserResponse
-            {
-                Id = u.Id,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.Email
-            })
-            .SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
-
-        if (user is null)
-        {
-            return Result.Failure<UserResponse>(UserErrors.NotFound(query.UserId));
-        }
-
-        return user;
+    return await identityService.GetByIdAsync(query.UserId, userContext.UserId, cancellationToken).ConfigureAwait(false);
     }
 }

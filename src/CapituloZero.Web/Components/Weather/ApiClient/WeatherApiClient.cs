@@ -1,4 +1,6 @@
-namespace CapituloZero.Web;
+using CapituloZero.Web.Components.Weather.Model;
+
+namespace CapituloZero.Web.Components.Weather.ApiClient;
 
 public class WeatherApiClient(HttpClient httpClient)
 {
@@ -21,9 +23,4 @@ public class WeatherApiClient(HttpClient httpClient)
 
         return forecasts?.ToArray() ?? [];
     }
-}
-
-public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

@@ -13,7 +13,7 @@ internal sealed class DeleteTodoCommandHandler(IApplicationDbContext context, IU
     public async Task<Result> Handle(DeleteTodoCommand command, CancellationToken cancellationToken)
     {
         TodoItem? todoItem = await context.TodoItems
-            .SingleOrDefaultAsync(t => t.Id == command.TodoItemId && t.UserId == userContext.UserId, cancellationToken).ConfigureAwait(false);
+                .SingleOrDefaultAsync(t => t.Id == command.TodoItemId && (Guid)t.UserId == userContext.UserId, cancellationToken).ConfigureAwait(false);
 
         if (todoItem is null)
         {

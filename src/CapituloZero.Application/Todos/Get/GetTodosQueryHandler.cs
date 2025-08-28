@@ -12,17 +12,17 @@ internal sealed class GetTodosQueryHandler(IApplicationDbContext context, IUserC
 {
     public async Task<Result<List<TodoResponse>>> Handle(GetTodosQuery query, CancellationToken cancellationToken)
     {
-        if (query.UserId != userContext.UserId)
+    if ((Guid)query.UserId != userContext.UserId)
         {
             return Result.Failure<List<TodoResponse>>(UserErrors.Unauthorized());
         }
 
         List<TodoResponse> todos = await context.TodoItems
-            .Where(todoItem => todoItem.UserId == query.UserId)
+            .Where(todoItem => (Guid)todoItem.UserId == (Guid)query.UserId)
             .Select(todoItem => new TodoResponse
             {
                 Id = todoItem.Id,
-                UserId = todoItem.UserId,
+                UserId = (Guid)todoItem.UserId,
                 Description = todoItem.Description,
                 DueDate = todoItem.DueDate,
                 Labels = todoItem.Labels,

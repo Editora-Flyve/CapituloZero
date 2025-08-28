@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.Application.Abstractions.Data;
-using CapituloZero.Infrastructure;
 using CapituloZero.Infrastructure.Authentication;
 using CapituloZero.Infrastructure.Authorization;
 using CapituloZero.Infrastructure.Database;
@@ -15,10 +14,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using CapituloZero.SharedKernel;
+using CapituloZero.Infrastructure.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace CapituloZero.Infrastructure;
 
-public static class DependencyInjection
+public static class InfrastructureRegistrar
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
@@ -81,9 +82,23 @@ public static class DependencyInjection
             });
 
         services.AddHttpContextAccessor();
-        services.AddScoped<IUserContext, UserContext>();
-        services.AddSingleton<IPasswordHasher, PasswordHasher>();
-        services.AddSingleton<ITokenProvider, TokenProvider>();
+    services.AddScoped<IUserContext, UserContext>();
+    services.AddScoped<ITokenProvider, TokenProvider>();
+    services.AddScoped<CapituloZero.Application.Abstractions.Authentication.IIdentityService, CapituloZero.Infrastructure.Usuarios.IdentityService>();
+
+        // ASP.NET Core Identity (no cookies)
+        services
+            .AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+            })
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddSignInManager();
 
         return services;
     }
