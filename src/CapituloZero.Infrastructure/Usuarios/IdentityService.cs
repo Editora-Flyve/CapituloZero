@@ -219,4 +219,32 @@ internal sealed class IdentityService(
 
         return new LoginResponse(accessToken, newRefresh);
     }
+
+    public async Task<Result<IReadOnlyList<CapituloZero.Application.Users.Get.UserListItemResponse>>> GetAllAsync(CancellationToken ct = default)
+    {
+        var users = await userManager.Users
+            .AsNoTracking()
+            .Select(u => new { u.Id, u.Email })
+            .ToListAsync(ct)
+            .ConfigureAwait(false);
+
+        var responses = new List<CapituloZero.Application.Users.Get.UserListItemResponse>(users.Count);
+        foreach (var u in users)
+        {
+            var entity = await userManager.FindByIdAsync(u.Id.ToString()).ConfigureAwait(false);
+            if (entity is null)
+            {
+                continue;
+            }
+            var roles = await userManager.GetRolesAsync(entity).ConfigureAwait(false);
+            responses.Add(new CapituloZero.Application.Users.Get.UserListItemResponse
+            {
+                Id = u.Id,
+                Email = u.Email!,
+                Tipos = roles.ToList()
+            });
+        }
+
+        return responses;
+    }
 }

@@ -7,7 +7,7 @@ Goal: Make an AI agent instantly productive in this modular monolith (.NET 9 + A
 - Vertical business contexts (planned / emerging modules):
 	- Loja (Store): catálogo, carrinho, pedidos, pré‑vendas.
 	- Autor (Author Portal): submissão de livros, relatórios, royalties.
-	- Terceiros (Partner / Freelancer Portal): tarefas (kanban), pagamentos, contratos.
+	- Parceiros (Partner / Freelancer Portal): tarefas (kanban), pagamentos, contratos.
 	- Admin: gestão de pré‑venda, loja, finanças, estoque, etiquetas.
 - Each context will group Domain + Application folders logically (e.g. `Domain/Autores`, `Application/Autores/RegisterAutor`). Keep cross‑context coupling only through Application abstractions or future integration events (do NOT directly reference another context’s entities inside a different context’s domain logic).
 
@@ -74,5 +74,20 @@ Goal: Make an AI agent instantly productive in this modular monolith (.NET 9 + A
 ### 13. Test Guidance (currently sparse)
 - Prefer testing Application handlers directly (inject in-memory DbContext or use Testcontainers later). Architecture tests project reserved for dependency rules.
 
-Need clarifications? Ask for: permission model, eventing between contexts, UI composition, or test strategy expansion.
+### 14. Permissions Cookbook (Tipos → Permissões → Endpoints)
+- Tipos de usuário (roles) disponíveis: `Default`, `Autor`, `Parceiro`, `Admin`.
+- Mapeamento (feito em `PermissionProvider`):
+  - `Default` → `users:access` (permite acesso básico a rotas de usuário autenticado)
+  - `Autor` → `autor:access`
+  - `Parceiro` → `parceiro:access`
+  - `Admin` → `users:admin` (libera todas as permissões no handler)
+- JWT inclui `sub`/`NameIdentifier` e roles; `ClaimsPrincipalExtensions.GetUserId()` resolve o `Guid`.
+- Como proteger rotas (Minimal API):
+  - Todos autenticados: `.HasPermission("users:access")`
+  - Autor e Admin: `.HasPermission("autor:access")`
+  - Parceiro e Admin: `.HasPermission("parceiro:access")`
+  - Apenas Admin: `.HasPermission("users:admin")`
+- Dica rápida: adicione constantes em `Web.Api/Endpoints/Users/Permissions.cs` e reutilize-as nos endpoints.
+- Rotas de demonstração existentes: `/demo/default`, `/demo/autor`, `/demo/parceiro`, `/demo/admin`.
 
+Need clarifications? Ask for: permission model, eventing between contexts, UI composition, or test strategy expansion.

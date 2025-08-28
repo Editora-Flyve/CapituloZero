@@ -22,7 +22,7 @@ internal sealed class AddTipos : IEndpoint
             var result = await handler.Handle(command, default).ConfigureAwait(false);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
-        .RequireAuthorization()
+        .HasPermission(Permissions.UsersAdmin)
         .WithTags(Tags.Users);
     }
 

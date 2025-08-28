@@ -15,12 +15,7 @@ internal sealed class AddTiposCommandHandler(IIdentityService identityService) :
 {
     public async Task<Result> Handle(AddTiposCommand request, CancellationToken cancellationToken)
     {
-        // Authorization rule: only the same user can self-assign for now (admin permission to be added later)
-        if (request.UserId != request.CurrentUserId)
-        {
-            return Result.Failure(Error.Problem("Usuarios.Unauthorized", "You cannot assign tipos for another user."));
-        }
-
+        // Autorização feita no endpoint via política de permissões (apenas Admin)
         return await identityService.AddUserTypesAsync(request.UserId, request.Tipos, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -1,7 +1,7 @@
 # CapituloZero - Arquitetura (Modular Monolith)
 
 ## Visão Geral
-CapituloZero é um monolito modular em .NET 9 (Aspire) que concentra múltiplos contextos de negócio isolados logicamente (Loja, Autor, Terceiros, Admin) dentro do mesmo processo e banco (por enquanto). A UI (Blazor Server) expõe uma loja pública; após login, o usuário pode navegar para outros portais conforme permissões.
+CapituloZero é um monolito modular em .NET 9 (Aspire) que concentra múltiplos contextos de negócio isolados logicamente (Loja, Autor, Parceiros, Admin) dentro do mesmo processo e banco (por enquanto). A UI (Blazor Server) expõe uma loja pública; após login, o usuário pode navegar para outros portais conforme permissões.
 
 Principais objetivos:
 - Evoluir rápido sem complexidade inicial de microsserviços.
@@ -20,7 +20,7 @@ Principais objetivos:
 ## Contextos (Verticais Planejados)
 - Loja: catálogo, carrinho, pedidos, pré‑vendas.
 - Autor: submissão de livros, relatórios, royalties.
-- Terceiros: kanban de tarefas, pagamentos, contratos.
+- Parceiros: kanban de tarefas, pagamentos, contratos.
 - Admin: gestão de pré‑vendas, loja, finanças, estoque, etiquetas.
 
 Cada contexto agrega seu domínio + aplicação; evitar uso direto de entidades de outro contexto. Se precisar interagir, usar IDs ou (futuramente) eventos de integração.
@@ -66,7 +66,27 @@ Cada contexto agrega seu domínio + aplicação; evitar uso direto de entidades 
 ## Autenticação & Autorização
 - JWT (config: `Jwt:Secret|Issuer|Audience`).
 - `IUserContext` injeta identidade para validar ownership (exemplo em criação de Todo).
-- `.HasPermission("Contexto.Ação")` preparado para granularidade futura (permissões personalizadas).
+- Permissões com `.HasPermission("<permissão>")` baseada em roles (tipos) do usuário:
+	- Tipos disponíveis (roles): `Default`, `Autor`, `Parceiro`, `Admin` (seed das roles feito em ApplicationDbContext; usuários novos recebem `Default`).
+	- Mapeamento de tipos → permissões (implementado em `PermissionProvider`):
+		- Default → `users:access` (base para qualquer usuário autenticado)
+		- Autor → `autor:access`
+		- Parceiro → `parceiro:access`
+		- Admin → `users:admin` (superusuário; handler concede acesso a qualquer permissão)
+- Como proteger endpoints:
+	- Acesso a todos autenticados: `.HasPermission("users:access")`
+	- Acesso Autor (e Admin): `.HasPermission("autor:access")`
+	- Acesso Parceiro (e Admin): `.HasPermission("parceiro:access")`
+	- Acesso somente Admin: `.HasPermission("users:admin")`
+- Observações:
+	- O `PermissionAuthorizationHandler` libera Admin para todas as permissões.
+	- As roles do usuário são emitidas no JWT; `ClaimsPrincipalExtensions.GetUserId()` resolve o `Guid` do usuário via `NameIdentifier`/`sub`.
+
+### Exemplo rápido (Minimal API)
+- Rota default (todos autenticados): `builder.MapGet("/algo", ...).HasPermission("users:access");`
+- Rota autor: `...HasPermission("autor:access");`
+- Rota parceiro: `...HasPermission("parceiro:access");`
+- Rota admin: `...HasPermission("users:admin");`
 
 ## Logging & Observability
 - Serilog estruturado + decorators de handlers para tracing de sucesso/falha.
@@ -89,7 +109,7 @@ Infrastructure: adiciona DbSet `Autores`; criar migration.
 API: `Endpoints/Autor/Register.cs` -> POST `/autores` -> retorna `Result<Guid>`.
 UI: Formulário Razor publica comando via HttpClient.
 
-## Roteiro de Evolução Futura
+## Roteiro de Evoluç��o Futura
 - Introduzir eventos de integração para comunicação cross-context sem acoplamento.
 - Adicionar permissionamento granular e feature flags por contexto.
 - Externalizar contextos de alta escala (ex: Loja) primeiro se necessário.

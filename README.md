@@ -3,10 +3,10 @@
 Modular monolith (ASP.NET Core / .NET 9 + Aspire) para uma plataforma editorial abrangente composta por:
 - Loja pública (catálogo, pré‑vendas).
 - Portal do Autor (submissões, relatórios, royalties).
-- Portal de Terceiros (kanban de tarefas, pagamentos, contratos).
+- Portal de Parceiros (kanban de tarefas, pagamentos, contratos).
 - Painel Administrativo (gestão de pedidos, pré‑vendas, estoque, finanças, etiquetas).
 
-Arquitetura baseada em camadas horizontais (SharedKernel, Domain, Application, Infrastructure, Web.Api, Web, AppHost) + contextos verticais (Loja, Autor, Terceiros, Admin) isolados logicamente dentro do mesmo processo.
+Arquitetura baseada em camadas horizontais (SharedKernel, Domain, Application, Infrastructure, Web.Api, Web, AppHost) + contextos verticais (Loja, Autor, Parceiros, Admin) isolados logicamente dentro do mesmo processo.
 
 ## Principais Padrões
 - CQRS (Commands / Queries + Handlers internos selados)
@@ -45,6 +45,25 @@ dotnet run --project src/CapituloZero.AppHost      # (Opcional) Orquestra Aspire
 dotnet ef migrations add <Name> --project src/CapituloZero.Infrastructure --startup-project src/CapituloZero.Web.Api -c ApplicationDbContext
 dotnet ef database update --project src/CapituloZero.Infrastructure --startup-project src/CapituloZero.Web.Api -c ApplicationDbContext
 ```
+
+## Permissões e Proteção de Endpoints
+- Tipos de usuário (roles): `Default`, `Autor`, `Parceiro`, `Admin` (semeados em banco; novos usuários recebem `Default`).
+- Mapeamento tipos → permissões (infra pronta):
+  - Default → `users:access` (base para qualquer usuário autenticado)
+  - Autor → `autor:access`
+  - Parceiro → `parceiro:access`
+  - Admin → `users:admin` (tem acesso a tudo)
+- Como usar nos endpoints (Minimal API):
+  - Todos autenticados: `.HasPermission("users:access")`
+  - Autor (e Admin): `.HasPermission("autor:access")`
+  - Parceiro (e Admin): `.HasPermission("parceiro:access")`
+  - Apenas Admin: `.HasPermission("users:admin")`
+
+Rotas de demonstração já mapeadas (para validar):
+- GET `/demo/default` → todos autenticados
+- GET `/demo/autor` → Autor e Admin
+- GET `/demo/parceiro` → Parceiro e Admin
+- GET `/demo/admin` → apenas Admin
 
 ## Adicionando Uma Feature (Exemplo)
 1. Domain: `Domain/Autores/Autor.cs` + eventos + erros.

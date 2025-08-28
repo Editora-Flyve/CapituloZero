@@ -13,4 +13,5 @@ public interface IIdentityService
     Task<Result<CapituloZero.Application.Users.GetById.UserResponse>> GetByIdAsync(Guid id, Guid currentUserId, CancellationToken ct = default);
     Task<Result<CapituloZero.Application.Users.GetByEmail.UserResponse>> GetByEmailAsync(string email, Guid currentUserId, CancellationToken ct = default);
     Task<Result> AddUserTypesAsync(Guid userId, IEnumerable<string> tipos, CancellationToken ct = default);
+    Task<Result<IReadOnlyList<CapituloZero.Application.Users.Get.UserListItemResponse>>> GetAllAsync(CancellationToken ct = default);
 }
