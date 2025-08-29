@@ -1,18 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using CapituloZero.Application;
-using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Application.Todos.Create;
 using CapituloZero.Domain.Todos;
 using CapituloZero.Domain.Users;
 using CapituloZero.Infrastructure.Database;
-using CapituloZero.Infrastructure.Todos;
-using CapituloZero.Infrastructure.DomainEvents;
-using CapituloZero.SharedKernel;
 using CapituloZero.ApplicationTests.Helpers;
+using CapituloZero.SharedKernel;
+using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -22,82 +15,65 @@ namespace CapituloZero.ApplicationTests.Todos;
 
 public class CreateTodoTests
 {
-    private static ServiceProvider BuildProvider(SpyDomainEventsDispatcher? spy = null, Guid? currentUserId = null, DateTime? now = null)
-    {
-        var services = new ServiceCollection();
-        services.AddApplication();
-        services.AddLogging();
-
-        // EF Core InMemory
-        spy ??= new SpyDomainEventsDispatcher();
-        services.AddDbContext<ApplicationDbContext>(o => o.UseInMemoryDatabase($"todos-create-{Guid.NewGuid()}").EnableSensitiveDataLogging());
-        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
-
-        // Fakes
-        services.AddScoped<IUserContext>(_ => new FakeUserContext { UserId = currentUserId ?? Guid.NewGuid() });
-        services.AddScoped<IDateTimeProvider>(_ => new StubDateTimeProvider { UtcNow = now ?? DateTime.UtcNow });
-        services.AddSingleton<IDomainEventsDispatcher>(spy);
-
-        return services.BuildServiceProvider();
-    }
+    private static readonly string[] LabelsPool = ["home", "work", "shopping", "study"];
+    private static Faker _faker = new("pt_BR");
 
     [Fact]
-    public async Task Create_succeeds_and_raises_domain_event()
+    public async Task CreateSucceedsAndRaisesDomainEvent()
     {
         var currentUser = Guid.NewGuid();
         var now = new DateTime(2025, 1, 2, 3, 4, 5, DateTimeKind.Utc);
         var spy = new SpyDomainEventsDispatcher();
-        using var provider = BuildProvider(spy, currentUser, now);
+        using var provider = TestServiceProvider.Build(spy, currentUser, now, dbName: $"todos-create-{Guid.NewGuid()}");
         var db = provider.GetRequiredService<ApplicationDbContext>();
         var handler = provider.GetRequiredService<ICommandHandler<CreateTodoCommand, Guid>>();
 
         var cmd = new CreateTodoCommand
         {
             UserId = currentUser,
-            Description = "Buy milk",
-            Priority = Priority.Medium,
+            Description = _faker.Lorem.Sentence(3),
+            Priority = _faker.PickRandom<Priority>(),
             DueDate = now.AddDays(1),
-            Labels = ["home", "shopping"]
+            Labels = _faker.Random.ListItems(LabelsPool, _faker.Random.Int(1, 3)).ToList()
         };
 
         var result = await handler.Handle(cmd, default);
-        result.IsSuccess.ShouldBeTrue(result.Error?.Description);
+        result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBe(Guid.Empty);
 
         var saved = await db.TodoItems.SingleAsync(t => t.Id == result.Value);
         saved.UserId.ShouldBe((UserId)currentUser);
-        saved.Description.ShouldBe("Buy milk");
+        saved.Description.ShouldBe(cmd.Description);
         saved.CreatedAt.ShouldBe(now);
         saved.IsCompleted.ShouldBeFalse();
 
-        // Domain events dispatched after SaveChanges
         spy.Events.OfType<TodoItemCreatedDomainEvent>().Any(e => e.TodoItemId == saved.Id).ShouldBeTrue();
     }
 
     [Fact]
-    public async Task Create_fails_when_user_context_differs()
+    public async Task CreateFailsWhenUserContextDiffers()
     {
         var currentUser = Guid.NewGuid();
-        using var provider = BuildProvider(currentUserId: currentUser);
+        using var provider = TestServiceProvider.Build(currentUserId: currentUser, dbName: $"todos-create-{Guid.NewGuid()}");
         var handler = provider.GetRequiredService<ICommandHandler<CreateTodoCommand, Guid>>();
 
         var cmd = new CreateTodoCommand
         {
-            UserId = Guid.NewGuid(), // different
+            UserId = Guid.NewGuid(),
             Description = "X",
             Priority = Priority.Low
         };
 
         var result = await handler.Handle(cmd, default);
         result.IsFailure.ShouldBeTrue();
-        result.Error.Code.ShouldBe(UserErrors.Unauthorized().Code);
+        result.ErrorInternal.Code.ShouldBe(UserErrors.Unauthorized().Code);
     }
 
     [Fact]
-    public async Task Create_fails_validation_when_description_empty()
+    public async Task CreateFailsValidationWhenDescriptionEmpty()
     {
         var currentUser = Guid.NewGuid();
-        using var provider = BuildProvider(currentUserId: currentUser);
+        using var provider = TestServiceProvider.Build(currentUserId: currentUser, dbName: $"todos-create-{Guid.NewGuid()}");
         var handler = provider.GetRequiredService<ICommandHandler<CreateTodoCommand, Guid>>();
 
         var cmd = new CreateTodoCommand
@@ -109,6 +85,6 @@ public class CreateTodoTests
 
         var result = await handler.Handle(cmd, default);
         result.IsFailure.ShouldBeTrue();
-        result.Error.Type.ShouldBe(ErrorType.Validation);
+        result.ErrorInternal.Type.ShouldBe(ErrorType.Validation);
     }
 }

@@ -13,18 +13,61 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="442b2034-8ed2-496b-aca2-003ed1ba17c2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/CapituloZero.ApplicationTests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/Fakes.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestDb.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CompleteTodoTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CreateTodoTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Users/UserHandlersTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/CapituloZero.UnitTests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CapituloZero.sln" beforeDir="false" afterPath="$PROJECT_DIR$/CapituloZero.sln" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestServiceProvider.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/DeleteTodoTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodoByIdTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodosTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/PostgresCollection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/PostgresContainerFixture.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowPostgresTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CapituloZero/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CapituloZero/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/doc/architecture.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Authentication/IIdentityService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Authentication/IIdentityService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/LoggingDecorator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/LoggingDecorator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/ValidationDecorator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/ValidationDecorator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Users/Register/RegisterUserCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Users/Register/RegisterUserCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Domain/Todos/TodoItemErrors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Domain/Todos/TodoItemErrors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/RefreshToken.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/UserErrors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/UserErrors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Database/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Database/ApplicationDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Time/DateTimeProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Time/DateTimeProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Todos/TodoItemConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Todos/TodoItemConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Usuarios/IdentityService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Usuarios/IdentityService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.ServiceDefaults/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.ServiceDefaults/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/Error.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ErrorInternal.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/Result.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/Result.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/UserId.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/UserId.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValidationError.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValidationErrorInternal.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValueObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValueObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Complete.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Complete.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Create.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Create.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/AddTipos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/AddTipos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/Login.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/Login.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/RefreshToken.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Infrastructure/CustomResults.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Infrastructure/CustomResults.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/CapituloZero.ApplicationTests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/CapituloZero.ApplicationTests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/Fakes.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/Fakes.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestDb.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestDb.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CompleteTodoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CompleteTodoTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CreateTodoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CreateTodoTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Users/UserHandlersTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Users/UserHandlersTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/CapituloZero.IdentityTests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/CapituloZero.IdentityTests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/TestHost.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/TestHost.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposAndGetCurrentTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposAndGetCurrentTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AuthorizationPermissionsTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AuthorizationPermissionsTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/GetCurrentTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/GetCurrentTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorInternalTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,21 +85,21 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "history": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
     {
-      "assignee": "Victor-Ochoa"
+      &quot;assignee&quot;: &quot;Victor-Ochoa&quot;
     },
     {
-      "assignee": "Victor-Ochoa",
-      "author": "Victor-Ochoa"
+      &quot;assignee&quot;: &quot;Victor-Ochoa&quot;,
+      &quot;author&quot;: &quot;Victor-Ochoa&quot;
     }
   ],
-  "lastFilter": {
-    "assignee": "Victor-Ochoa",
-    "author": "Victor-Ochoa"
+  &quot;lastFilter&quot;: {
+    &quot;assignee&quot;: &quot;Victor-Ochoa&quot;,
+    &quot;author&quot;: &quot;Victor-Ochoa&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;git@github.com:Editora-Flyve/CapituloZero.git&quot;,
@@ -68,12 +111,29 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e5ace92664429b8b34b68b587316fb211811b58aeb53422b43cecca2ad2bdaf3/AsyncTaskMethodBuilderT.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/.config/github-copilot/intellij/mcp.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/.nuget/NuGet/NuGet.Config" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/CapituloZero.Application/DependencyInjection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/GetUsers.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/CapituloZero.Web/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/Fakes.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestDb.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestServiceProvider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CompleteTodoTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CreateTodoTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/DeleteTodoTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodoByIdTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodosTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Users/UserHandlersTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/PostgresCollection.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/PostgresContainerFixture.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowPostgresTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorTests.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="Toolset" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -87,25 +147,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Aspire Host.CapituloZero.AppHost: https.executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feat/test",
-    "last_opened_file_path": "/home/voch_silva/dotnet/dotnet",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.github.copilot.settings.mcp.McpConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;911143f2-25f3-47b5-860c-96eef338a473.executor&quot;: &quot;Debug&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Aspire Host.CapituloZero.AppHost: https.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/test&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/voch_silva/dotnet/dotnet&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Aspire Host.CapituloZero.AppHost: https">
     <configuration name="CapituloZero.AppHost: http" type="AspireHostConfiguration" factoryName="Aspire Host" activateToolWindowBeforeRun="false">
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/CapituloZero.AppHost/CapituloZero.AppHost.csproj" />
@@ -241,7 +302,11 @@
       <workItem from="1756304912198" duration="53000" />
       <workItem from="1756304995071" duration="15077000" />
       <workItem from="1756327489071" duration="205000" />
-      <workItem from="1756343326875" duration="9899000" />
+      <workItem from="1756343326875" duration="10638000" />
+      <workItem from="1756403914922" duration="5679000" />
+      <workItem from="1756470837957" duration="865000" />
+      <workItem from="1756472117929" duration="2669000" />
+      <workItem from="1756474970872" duration="9797000" />
     </task>
     <task id="LOCAL-00001" summary="fix aspire run">
       <option name="closed" value="true" />
@@ -311,12 +376,7 @@
     <option name="sortedColumn" value="1" />
     <option name="symbolColumnWidth" value="75" />
     <coverage-tree-state>
-      <expand>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 19% 2096/2587" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-      </expand>
+      <expand />
       <select />
     </coverage-tree-state>
   </component>
@@ -327,7 +387,9 @@
     <option featureType="dependencySupport" implementationName="dotnet:OpenTelemetry.Api" />
     <option featureType="dependencySupport" implementationName="executable:docker" />
     <option featureType="dependencySupport" implementationName="dotnet:OpenTelemetry.Instrumentation.AspNetCore" />
+    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.Identity.Client" />
     <option featureType="dependencySupport" implementationName="dotnet:Aspire.Hosting" />
+    <option featureType="dependencySupport" implementationName="dotnet:NSubstitute" />
     <option featureType="dependencySupport" implementationName="dotnet:OpenTelemetry" />
     <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore.Abstractions" />
     <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore.Relational" />

@@ -28,6 +28,17 @@ public sealed class ApplicationDbContext(
 
         builder.HasDefaultSchema(Schemas.Default);
 
+        // Explicit ID generation convention for all entities inheriting from SharedKernel.Entity
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            if (typeof(Entity).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType)
+                    .Property<Guid>(nameof(Entity.Id))
+                    .ValueGeneratedOnAdd();
+            }
+        }
+
         // Map Identity tables to the users schema with snake_case names
         builder.Entity<ApplicationUser>(b =>
         {

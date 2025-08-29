@@ -1,18 +1,13 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using CapituloZero.Application;
-using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Application.Abstractions.Data;
 using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Application.Todos.Complete;
-using CapituloZero.Application.Todos.Create;
 using CapituloZero.Domain.Todos;
 using CapituloZero.Infrastructure.Database;
+using CapituloZero.Infrastructure.DomainEvents;
 using CapituloZero.SharedKernel;
 using CapituloZero.ApplicationTests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -20,22 +15,6 @@ namespace CapituloZero.ApplicationTests.Todos;
 
 public class CompleteTodoTests
 {
-    private static ServiceProvider BuildProvider(SpyDomainEventsDispatcher? spy = null, Guid? currentUserId = null, DateTime? now = null)
-    {
-        var services = new ServiceCollection();
-        services.AddApplication();
-
-        spy ??= new SpyDomainEventsDispatcher();
-        services.AddDbContext<ApplicationDbContext>(o => o.UseInMemoryDatabase($"todos-complete-{Guid.NewGuid()}").EnableSensitiveDataLogging());
-        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
-
-        services.AddScoped<IUserContext>(_ => new FakeUserContext { UserId = currentUserId ?? Guid.NewGuid() });
-        services.AddScoped<IDateTimeProvider>(_ => new StubDateTimeProvider { UtcNow = now ?? DateTime.UtcNow });
-        services.AddSingleton<IDomainEventsDispatcher>(spy);
-
-        return services.BuildServiceProvider();
-    }
-
     private static async Task<Guid> SeedTodo(ApplicationDbContext db, Guid userId, DateTime createdAt)
     {
         var todo = new TodoItem
@@ -52,69 +31,83 @@ public class CompleteTodoTests
     }
 
     [Fact]
-    public async Task Complete_succeeds_and_sets_completed_at_and_raises_event()
+    public async Task CompleteSucceedsAndSetsCompletedAtAndRaisesEvent()
     {
         var user = Guid.NewGuid();
         var now = DateTime.UtcNow;
-        var spy = new SpyDomainEventsDispatcher();
-        using var provider = BuildProvider(spy, user, now);
+        var dispatcher = Substitute.For<IDomainEventsDispatcher>();
+        using var provider = TestServiceProvider.Build(dispatcher, user, now, dbName: $"todos-complete-{Guid.NewGuid()}");
         var db = provider.GetRequiredService<ApplicationDbContext>();
         var todoId = await SeedTodo(db, user, now);
         var handler = provider.GetRequiredService<ICommandHandler<CompleteTodoCommand>>();
 
         var result = await handler.Handle(new CompleteTodoCommand(todoId), default);
-        result.IsSuccess.ShouldBeTrue(result.Error?.Description);
+        result.IsSuccess.ShouldBeTrue();
 
         var saved = await db.TodoItems.SingleAsync(t => t.Id == todoId);
         saved.IsCompleted.ShouldBeTrue();
         saved.CompletedAt.ShouldBe(now);
 
-        spy.Events.OfType<TodoItemCompletedDomainEvent>().Any(e => e.TodoItemId == todoId).ShouldBeTrue();
+        await dispatcher.Received(1).DispatchAsync(
+            Arg.Is<IEnumerable<IDomainEvent>>(events =>
+                events.OfType<TodoItemCompletedDomainEvent>().Any(e => e.TodoItemId == todoId)
+            ),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Complete_fails_when_todo_not_found_or_not_owned()
+    public async Task CompleteFailsWhenTodoNotFoundOrNotOwned()
     {
         var user = Guid.NewGuid();
-        using var provider = BuildProvider(currentUserId: user);
+        var dispatcher = Substitute.For<IDomainEventsDispatcher>();
+        using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-complete-{Guid.NewGuid()}");
         var handler = provider.GetRequiredService<ICommandHandler<CompleteTodoCommand>>();
 
         var result = await handler.Handle(new CompleteTodoCommand(Guid.NewGuid()), default);
         result.IsFailure.ShouldBeTrue();
-        result.Error.Code.ShouldBe("TodoItems.NotFound");
+        result.ErrorInternal.Code.ShouldBe("TodoItems.NotFound");
+
+        await dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Complete_fails_when_already_completed()
+    public async Task CompleteFailsWhenAlreadyCompleted()
     {
         var user = Guid.NewGuid();
         var now = DateTime.UtcNow;
-        using var provider = BuildProvider(currentUserId: user, now: now);
+        var dispatcher = Substitute.For<IDomainEventsDispatcher>();
+        using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, now: now, dbName: $"todos-complete-{Guid.NewGuid()}");
         var db = provider.GetRequiredService<ApplicationDbContext>();
         var todoId = await SeedTodo(db, user, now);
 
-        // mark completed manually
+        // marcar manualmente como completo
         var todo = await db.TodoItems.SingleAsync(t => t.Id == todoId);
         todo.IsCompleted = true;
         todo.CompletedAt = now;
         await db.SaveChangesAsync();
 
+        dispatcher.ClearReceivedCalls();
+
         var handler = provider.GetRequiredService<ICommandHandler<CompleteTodoCommand>>();
         var result = await handler.Handle(new CompleteTodoCommand(todoId), default);
         result.IsFailure.ShouldBeTrue();
-        result.Error.Code.ShouldBe("TodoItems.AlreadyCompleted");
+        result.ErrorInternal.Code.ShouldBe("TodoItems.AlreadyCompleted");
+
+        await dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Validator_rejects_empty_id()
+    public async Task ValidatorRejectsEmptyId()
     {
         var user = Guid.NewGuid();
-        using var provider = BuildProvider(currentUserId: user);
+        var dispatcher = Substitute.For<IDomainEventsDispatcher>();
+        using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-complete-{Guid.NewGuid()}");
         var handler = provider.GetRequiredService<ICommandHandler<CompleteTodoCommand>>();
 
         var result = await handler.Handle(new CompleteTodoCommand(Guid.Empty), default);
         result.IsFailure.ShouldBeTrue();
-        result.Error.Type.ShouldBe(ErrorType.Validation);
+        result.ErrorInternal.Type.ShouldBe(ErrorType.Validation);
+
+        await dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
     }
 }
-

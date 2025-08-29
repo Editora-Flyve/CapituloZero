@@ -1,4 +1,3 @@
-using System;
 using CapituloZero.SharedKernel;
 using Shouldly;
 using Xunit;
@@ -8,13 +7,13 @@ namespace CapituloZero.UnitTests.SharedKernel;
 public class UserIdTests
 {
     [Fact]
-    public void Cannot_create_empty_userid()
+    public void CannotCreateEmptyUserid()
     {
         Should.Throw<ArgumentException>(() => new UserId(Guid.Empty));
     }
 
     [Fact]
-    public void Equality_and_implicit_conversions_work()
+    public void EqualityAndImplicitConversionsWork()
     {
         var g = Guid.NewGuid();
         UserId a = new(g);

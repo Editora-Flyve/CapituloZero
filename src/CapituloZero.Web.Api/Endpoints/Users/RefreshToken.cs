@@ -1,7 +1,5 @@
 using CapituloZero.Application.Abstractions.Messaging;
-using CapituloZero.Application.Users.Login;
 using CapituloZero.Application.Users.RefreshToken;
-using CapituloZero.SharedKernel;
 using CapituloZero.Web.Api.Extensions;
 using CapituloZero.Web.Api.Infrastructure;
 

@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CapituloZero.Infrastructure.Time;
+using CapituloZero.SharedKernel;
 
 namespace CapituloZero.IdentityTests.Helpers;
 
 internal static class TestHost
 {
-    public static ServiceProvider Build()
+    public static ServiceProvider Build(string? connectionString = null)
     {
         var services = new ServiceCollection();
 
@@ -30,10 +32,24 @@ internal static class TestHost
         IConfiguration config = new ConfigurationBuilder().AddInMemoryCollection(inMemoryConfig!).Build();
         services.AddSingleton(config);
 
-        // EF Core InMemory
-        services.AddDbContext<ApplicationDbContext>(o =>
-            o.UseInMemoryDatabase($"identity-tests-{Guid.NewGuid()}")
-             .EnableSensitiveDataLogging());
+        // Time provider for tests
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+        // EF Core
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            services.AddDbContext<ApplicationDbContext>(o =>
+                o.UseInMemoryDatabase($"identity-tests-{Guid.NewGuid()}")
+                 .EnableSensitiveDataLogging());
+        }
+        else
+        {
+            services.AddDbContext<ApplicationDbContext>(o =>
+                o.UseNpgsql(connectionString)
+                 .UseSnakeCaseNamingConvention()
+                 .EnableSensitiveDataLogging());
+        }
 
         // Identity Core with EF stores
         services
@@ -49,13 +65,13 @@ internal static class TestHost
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager();
 
-    // Application layer (CQRS handlers, validators, decorators)
-    services.AddApplication();
+        // Application layer (CQRS handlers, validators, decorators)
+        services.AddApplication();
 
         // Abstractions
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<IIdentityService, IdentityService>();
-    services.AddScoped<IDomainEventsDispatcher, NoopDomainEventsDispatcher>();
+        services.AddScoped<IDomainEventsDispatcher, NoopDomainEventsDispatcher>();
 
         return services.BuildServiceProvider();
     }

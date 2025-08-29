@@ -1,4 +1,3 @@
-using System;
 using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.SharedKernel;
 

@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using CapituloZero.SharedKernel;
 using Shouldly;
 using Xunit;
@@ -11,7 +9,7 @@ file sealed class TestEntity : Entity { public string Name { get; set; } = strin
 public class EntityTests
 {
     [Fact]
-    public void Equality_based_on_Id()
+    public void EqualityBasedOnId()
     {
         var id = Guid.NewGuid();
         var a = new TestEntity { Id = id, Name = "A" };
@@ -26,7 +24,7 @@ public class EntityTests
     }
 
     [Fact]
-    public void Raise_and_clear_domain_events()
+    public void RaiseAndClearDomainEvents()
     {
         var e = new TestEntity { Id = Guid.NewGuid(), Name = "X" };
         e.DomainEvents.Count.ShouldBe(0);

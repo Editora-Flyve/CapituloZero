@@ -3,7 +3,6 @@ using CapituloZero.Application.Abstractions.Messaging;
 using CapituloZero.Application.Users.AddTipos;
 using CapituloZero.Web.Api.Extensions;
 using CapituloZero.Web.Api.Infrastructure;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CapituloZero.Web.Api.Endpoints.Users;

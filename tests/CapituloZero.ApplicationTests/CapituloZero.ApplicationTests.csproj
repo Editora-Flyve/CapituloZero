@@ -18,6 +18,8 @@
     <PackageReference Include="Shouldly" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Bogus" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/CapituloZero.Application/CapituloZero.Application.csproj" />
@@ -26,4 +28,3 @@
     <ProjectReference Include="../../src/CapituloZero.SharedKernel/CapituloZero.SharedKernel.csproj" />
   </ItemGroup>
 </Project>
-

@@ -4,5 +4,12 @@ namespace CapituloZero.Infrastructure.Time;
 
 internal sealed class DateTimeProvider : IDateTimeProvider
 {
-    public DateTime UtcNow => DateTime.UtcNow;
+    private readonly TimeProvider _timeProvider;
+
+    public DateTimeProvider(TimeProvider timeProvider)
+    {
+        _timeProvider = timeProvider;
+    }
+
+    public DateTime UtcNow => _timeProvider.GetUtcNow().UtcDateTime;
 }

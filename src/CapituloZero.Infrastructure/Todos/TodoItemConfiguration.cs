@@ -1,5 +1,4 @@
 ﻿using CapituloZero.Domain.Todos;
-using CapituloZero.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using CapituloZero.SharedKernel;
