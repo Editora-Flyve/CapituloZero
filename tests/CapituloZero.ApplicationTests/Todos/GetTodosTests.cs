@@ -62,7 +62,6 @@ public class GetTodosTests
         var result = await handler.Handle(new GetTodosQuery(Guid.NewGuid()), default);
         result.IsFailure.ShouldBeTrue();
         result.ErrorInternal.Code.ShouldBe("Users.Unauthorized");
-        result.ErrorInternal.Type.ShouldBe(ErrorType.Problem);
+        result.ErrorInternal.Type.ShouldBe(ErrorType.Failure);
     }
 }
-

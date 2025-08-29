@@ -13,61 +13,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="442b2034-8ed2-496b-aca2-003ed1ba17c2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestServiceProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/DeleteTodoTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodoByIdTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodosTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/PostgresCollection.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/PostgresContainerFixture.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowPostgresTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CapituloZero/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CapituloZero/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/doc/architecture.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Authentication/IIdentityService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Authentication/IIdentityService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/LoggingDecorator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/LoggingDecorator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/ValidationDecorator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Abstractions/Behaviors/ValidationDecorator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Todos/Create/CreateTodoCommandValidator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Application/Users/Register/RegisterUserCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Application/Users/Register/RegisterUserCommandValidator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Domain/Todos/TodoItemErrors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Domain/Todos/TodoItemErrors.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/RefreshToken.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/UserErrors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Domain/Users/UserErrors.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Database/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Database/ApplicationDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Time/DateTimeProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Time/DateTimeProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Todos/TodoItemConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Todos/TodoItemConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Usuarios/IdentityService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Infrastructure/Usuarios/IdentityService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.ServiceDefaults/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.ServiceDefaults/Extensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/Error.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ErrorInternal.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/Result.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/Result.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/UserId.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/UserId.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValidationError.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValidationErrorInternal.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValueObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.SharedKernel/ValueObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Complete.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Complete.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Create.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Todos/Create.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/AddTipos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/AddTipos.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/Login.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/Login.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/RefreshToken.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Endpoints/Users/RefreshToken.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Infrastructure/CustomResults.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/CapituloZero.Web.Api/Infrastructure/CustomResults.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/CapituloZero.ApplicationTests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/CapituloZero.ApplicationTests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/Fakes.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/Fakes.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestDb.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Helpers/TestDb.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CompleteTodoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CompleteTodoTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CreateTodoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/CreateTodoTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Users/UserHandlersTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Users/UserHandlersTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/CapituloZero.IdentityTests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/CapituloZero.IdentityTests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/TestHost.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Helpers/TestHost.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposAndGetCurrentTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposAndGetCurrentTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AddTiposTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AuthorizationPermissionsTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/AuthorizationPermissionsTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/GetCurrentTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/GetCurrentTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.IdentityTests/Users/IdentityFlowTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorInternalTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/DeleteTodoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/DeleteTodoTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodosTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CapituloZero.ApplicationTests/Todos/GetTodosTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,6 +56,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/473d97221b573ab97e6e745d8adae8b9e95a666539d6ed3cc8566b245d93a/ArgumentNullException.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/867bdde674cefddad7c5552c7b15a72f9b6512445394896e5053e46c6f9f5/ShouldAssertException.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e5ace92664429b8b34b68b587316fb211811b58aeb53422b43cecca2ad2bdaf3/AsyncTaskMethodBuilderT.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/.config/github-copilot/intellij/mcp.json" root0="FORCE_HIGHLIGHTING" />
@@ -129,7 +79,7 @@
     <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/EntityTests.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ResultTests.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/UserIdTests.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tests/CapituloZero.UnitTests/SharedKernel/ValidationErrorInternalTests.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -306,7 +256,7 @@
       <workItem from="1756403914922" duration="5679000" />
       <workItem from="1756470837957" duration="865000" />
       <workItem from="1756472117929" duration="2669000" />
-      <workItem from="1756474970872" duration="9797000" />
+      <workItem from="1756474970872" duration="12139000" />
     </task>
     <task id="LOCAL-00001" summary="fix aspire run">
       <option name="closed" value="true" />
@@ -364,7 +314,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756385351761</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="refactor: remove unused using directives and improve error handling in application services">
+      <option name="closed" value="true" />
+      <created>1756489707135</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1756489707135</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -427,7 +385,8 @@
     <MESSAGE value="feat: implement refresh token functionality and update identity service" />
     <MESSAGE value="feat: add user management features including user query and permissions" />
     <MESSAGE value="feat: add GetUsers endpoint with permission checks" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add GetUsers endpoint with permission checks" />
+    <MESSAGE value="refactor: remove unused using directives and improve error handling in application services" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: remove unused using directives and improve error handling in application services" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -35,21 +35,32 @@ public class DeleteTodoTests
     {
         var user = Guid.NewGuid();
         var dispatcher = Substitute.For<IDomainEventsDispatcher>();
-        await using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-delete-{Guid.NewGuid()}");
+        using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-delete-{Guid.NewGuid()}");
         var db = provider.GetRequiredService<ApplicationDbContext>();
         var todoId = await SeedTodo(db, user);
-        var handler = provider.GetRequiredService<ICommandHandler<DeleteTodoCommand>>();
 
+        dispatcher.ClearReceivedCalls();
+
+        var handler = provider.GetRequiredService<ICommandHandler<DeleteTodoCommand>>();
         var result = await handler.Handle(new DeleteTodoCommand(todoId), default);
         result.IsSuccess.ShouldBeTrue();
 
         (await db.TodoItems.AnyAsync(t => t.Id == todoId)).ShouldBeFalse();
 
-        await dispatcher.Received(1).DispatchAsync(
-            Arg.Is<IEnumerable<IDomainEvent>>(events =>
-                events.OfType<TodoItemDeletedDomainEvent>().Any(e => e.TodoItemId == todoId)
-            ),
+        dispatcher.Received(1).DispatchAsync(
+            Arg.Any<IEnumerable<IDomainEvent>>(),
             Arg.Any<CancellationToken>());
+
+        // Captura o argumento real passado para DispatchAsync
+        var dispatchedEvents = dispatcher.ReceivedCalls()
+            .First(call => call.GetMethodInfo().Name == nameof(IDomainEventsDispatcher.DispatchAsync))
+            .GetArguments()[0] as IEnumerable<IDomainEvent>;
+
+        dispatchedEvents.ShouldNotBeNull();
+        dispatchedEvents.Any().ShouldBeTrue();
+        dispatchedEvents.Any(e =>
+            e is TodoItemDeletedDomainEvent && ((TodoItemDeletedDomainEvent)e).TodoItemId == todoId
+        ).ShouldBeTrue();
     }
 
     [Fact]
@@ -57,14 +68,14 @@ public class DeleteTodoTests
     {
         var user = Guid.NewGuid();
         var dispatcher = Substitute.For<IDomainEventsDispatcher>();
-        await using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-delete-{Guid.NewGuid()}");
+        using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-delete-{Guid.NewGuid()}");
         var handler = provider.GetRequiredService<ICommandHandler<DeleteTodoCommand>>();
 
         var result = await handler.Handle(new DeleteTodoCommand(Guid.NewGuid()), default);
         result.IsFailure.ShouldBeTrue();
         result.ErrorInternal.Code.ShouldBe("TodoItems.NotFound");
 
-        await dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
+        dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -72,14 +83,13 @@ public class DeleteTodoTests
     {
         var user = Guid.NewGuid();
         var dispatcher = Substitute.For<IDomainEventsDispatcher>();
-        await using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-delete-{Guid.NewGuid()}");
+        using var provider = TestServiceProvider.Build(dispatcher, currentUserId: user, dbName: $"todos-delete-{Guid.NewGuid()}");
         var handler = provider.GetRequiredService<ICommandHandler<DeleteTodoCommand>>();
 
         var result = await handler.Handle(new DeleteTodoCommand(Guid.Empty), default);
         result.IsFailure.ShouldBeTrue();
         result.ErrorInternal.Type.ShouldBe(ErrorType.Validation);
 
-        await dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
+        dispatcher.DidNotReceive().DispatchAsync(Arg.Any<IEnumerable<IDomainEvent>>(), Arg.Any<CancellationToken>());
     }
 }
-
