@@ -9,32 +9,32 @@ namespace CapituloZero.IdentityTests.Users;
 public class IdentityFlowTests
 {
     [Fact]
-    public async Task Register_And_Login_Succeeds_With_Default_Role()
+    public async Task RegisterAndLoginSucceedsWithDefaultRole()
     {
-        using var provider = TestHost.Build();
+        await using var provider = TestHost.Build();
         var identity = provider.GetRequiredService<IIdentityService>();
 
-    var userId = await identity.RegisterAsync("john.doe@test.com", "John", "Doe", "Abc123!");
-    userId.IsSuccess.ShouldBeTrue(userId.Error?.Description);
+        var userId = await identity.RegisterAsync("john.doe@test.com", "John", "Doe", "Abc123!").ConfigureAwait(false);
+        userId.IsSuccess.ShouldBeTrue(userId.ErrorInternal?.Description);
         userId.Value.ShouldNotBe(Guid.Empty);
 
-        var token = await identity.LoginAsync("john.doe@test.com", "Abc123!");
-        token.IsSuccess.ShouldBeTrue(token.Error?.Description);
+        var token = await identity.LoginAsync("john.doe@test.com", "Abc123!").ConfigureAwait(false);
+        token.IsSuccess.ShouldBeTrue(token.ErrorInternal?.Description);
         token.Value.AccessToken.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
-    public async Task GetById_Fails_For_Different_User()
+    public async Task GetByIdFailsForDifferentUser()
     {
-        using var provider = TestHost.Build();
+        await using var provider = TestHost.Build();
         var identity = provider.GetRequiredService<IIdentityService>();
 
-    var userId = await identity.RegisterAsync("alice@test.com", "Alice", "Doe", "Abc123!");
-    userId.IsSuccess.ShouldBeTrue(userId.Error?.Description);
+        var userId = await identity.RegisterAsync("alice@test.com", "Alice", "Doe", "Abc123!").ConfigureAwait(false);
+        userId.IsSuccess.ShouldBeTrue(userId.ErrorInternal?.Description);
 
         var otherId = Guid.NewGuid();
-        var got = await identity.GetByIdAsync(userId.Value, otherId);
+        var got = await identity.GetByIdAsync(userId.Value, otherId).ConfigureAwait(false);
         got.IsFailure.ShouldBeTrue();
-    got.Error.Code.ShouldBe("Users.Unauthorized");
+        got.ErrorInternal.Code.ShouldBe("Users.Unauthorized");
     }
 }

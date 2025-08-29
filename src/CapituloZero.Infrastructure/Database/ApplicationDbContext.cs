@@ -28,6 +28,17 @@ public sealed class ApplicationDbContext(
 
         builder.HasDefaultSchema(Schemas.Default);
 
+        // Explicit ID generation convention for all entities inheriting from SharedKernel.Entity
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            if (typeof(Entity).IsAssignableFrom(entityType.ClrType))
+            {
+                builder.Entity(entityType.ClrType)
+                    .Property<Guid>(nameof(Entity.Id))
+                    .ValueGeneratedOnAdd();
+            }
+        }
+
         // Map Identity tables to the users schema with snake_case names
         builder.Entity<ApplicationUser>(b =>
         {
@@ -87,38 +98,26 @@ public sealed class ApplicationDbContext(
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // When should you publish domain events?
-        //
-        // 1. BEFORE calling SaveChangesAsync
-        //     - domain events are part of the same transaction
-        //     - immediate consistency
-        // 2. AFTER calling SaveChangesAsync
-        //     - domain events are a separate transaction
-        //     - eventual consistency
-        //     - handlers can fail
-
-    int result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-    await PublishDomainEventsAsync().ConfigureAwait(false);
-
-        return result;
-    }
-
-    private async Task PublishDomainEventsAsync()
-    {
-        var domainEvents = ChangeTracker
+        // Captura os eventos de domínio antes do SaveChanges para não perder eventos de entidades deletadas
+        List<IDomainEvent> pendingDomainEvents = ChangeTracker
             .Entries<Entity>()
-            .Select(entry => entry.Entity)
-            .SelectMany(entity =>
-            {
-                List<IDomainEvent> domainEvents = entity.DomainEvents;
-
-                entity.ClearDomainEvents();
-
-                return domainEvents;
-            })
+            .Select(e => e.Entity)
+            .SelectMany(e => e.DomainEvents)
             .ToList();
 
-    await domainEventsDispatcher.DispatchAsync(domainEvents).ConfigureAwait(false);
+        // Limpa os eventos das entidades para evitar re-publicação
+        foreach (var entity in ChangeTracker.Entries<Entity>().Select(e => e.Entity))
+        {
+            entity.ClearDomainEvents();
+        }
+
+        int result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        if (pendingDomainEvents.Count > 0)
+        {
+            await domainEventsDispatcher.DispatchAsync(pendingDomainEvents, cancellationToken).ConfigureAwait(false);
+        }
+
+        return result;
     }
 }

@@ -8,6 +8,18 @@ Principais objetivos:
 - Facilitar futura extração de contextos (boundary claro hoje = serviço independente amanhã).
 - Reutilizar infraestrutura (observabilidade, auth, persistence) com baixo acoplamento entre domínios.
 
+## Testes e Cobertura
+- Estratégia: priorizar testes de Application (handlers/validators) com EF Core InMemory e fakes para abstrações (IUserContext, IDateTimeProvider, IIdentityService). Cobrir SharedKernel (Result, Entity, ValueObjects, ValidationError) e eventos de domínio publicados após SaveChanges.
+- Projetos:
+  - tests/CapituloZero.UnitTests → SharedKernel/Domain
+  - tests/CapituloZero.ApplicationTests → Handlers/Validators (CQRS)
+  - tests/CapituloZero.IdentityTests → Fluxos de identidade/roles
+- Execução:
+  - `dotnet test CapituloZero.sln -c Debug --collect:"XPlat Code Coverage"`
+- Metas:
+  - Cobertura mínima: 95%
+  - Meta: 100% para SharedKernel e handlers/validators principais
+
 ## Camadas (Horizontais)
 - SharedKernel: Primitivos (`Entity`, `Result`, `Error`, eventos, value objects futuros).
 - Domain: Modelo puro + eventos + erros, organizado por contexto (`Domain/Autores`, `Domain/Loja`).

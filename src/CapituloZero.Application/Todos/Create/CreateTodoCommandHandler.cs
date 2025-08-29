@@ -31,9 +31,11 @@ internal sealed class CreateTodoCommandHandler(
             CreatedAt = dateTimeProvider.UtcNow
         };
 
-        todoItem.Raise(new TodoItemCreatedDomainEvent(todoItem.Id));
-
+        // Adiciona primeiro para garantir que o EF gere o Id do agregado
         context.TodoItems.Add(todoItem);
+
+        // Agora levanta o evento com o Id correto
+        todoItem.Raise(new TodoItemCreatedDomainEvent(todoItem.Id));
 
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 

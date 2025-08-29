@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace CapituloZero.SharedKernel;
 
 public sealed class UserId : ValueObject

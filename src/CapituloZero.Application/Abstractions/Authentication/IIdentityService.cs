@@ -1,5 +1,3 @@
-using CapituloZero.Application.Users.GetByEmail;
-using CapituloZero.Application.Users.GetById;
 using CapituloZero.Application.Users.Login;
 using CapituloZero.SharedKernel;
 

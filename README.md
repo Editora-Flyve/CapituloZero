@@ -46,6 +46,26 @@ dotnet ef migrations add <Name> --project src/CapituloZero.Infrastructure --star
 dotnet ef database update --project src/CapituloZero.Infrastructure --startup-project src/CapituloZero.Web.Api -c ApplicationDbContext
 ```
 
+## Testes e Cobertura
+- Projetos de teste:
+  - `tests/CapituloZero.UnitTests` (SharedKernel/Domain)
+  - `tests/CapituloZero.ApplicationTests` (Handlers/Validators)
+  - `tests/CapituloZero.IdentityTests` (fluxos de identidade)
+- Executar todos os testes com coleta de cobertura (usa `coverlet.collector` já referenciado):
+
+```bash
+# Restaurar, compilar e testar com cobertura
+dotnet restore CapituloZero.sln
+dotnet build CapituloZero.sln -c Debug
+dotnet test CapituloZero.sln -c Debug -v minimal --collect:"XPlat Code Coverage" --logger:"trx;LogFileName=test_results.trx"
+```
+
+- Onde ver a cobertura:
+  - Um arquivo `coverage.cobertura.xml` é gerado em `tests/*/TestResults/<guid>/` por projeto; visualize com extensões do VS Code ou converta para HTML via ferramentas como `reportgenerator`.
+- Metas:
+  - Mínimo: 95% linhas cobertas
+  - Meta: 100% das unidades core (SharedKernel, Application handlers/validators)
+
 ## Permissões e Proteção de Endpoints
 - Tipos de usuário (roles): `Default`, `Autor`, `Parceiro`, `Admin` (semeados em banco; novos usuários recebem `Default`).
 - Mapeamento tipos → permissões (infra pronta):

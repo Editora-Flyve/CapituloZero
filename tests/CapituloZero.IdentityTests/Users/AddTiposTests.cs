@@ -1,5 +1,4 @@
 using CapituloZero.Application.Abstractions.Authentication;
-using CapituloZero.Application.Users.AddTipos;
 using CapituloZero.IdentityTests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -14,18 +13,18 @@ public class AddTiposTests
     [Fact]
     public async Task AddTiposSelfAssignDefaultAutorParceiro()
     {
-        using var provider = TestHost.Build();
+        await using var provider = TestHost.Build();
         var identity = provider.GetRequiredService<IIdentityService>();
 
         var reg = await identity.RegisterAsync("diana@test.com", "Diana", "Prince", "abc123");
-        reg.IsSuccess.ShouldBeTrue(reg.Error?.Description);
+        reg.IsSuccess.ShouldBeTrue(reg.ErrorInternal?.Description);
 
         // Use identity service directly
         var result = await identity.AddUserTypesAsync(reg.Value, AutorParceiro, CancellationToken.None);
-        result.IsSuccess.ShouldBeTrue(result.Error?.Description);
+        result.IsSuccess.ShouldBeTrue(result.ErrorInternal?.Description);
 
         var get = await identity.GetByIdAsync(reg.Value, reg.Value);
-        get.IsSuccess.ShouldBeTrue(get.Error?.Description);
+        get.IsSuccess.ShouldBeTrue(get.ErrorInternal?.Description);
         get.Value.Tipos.ShouldContain("Default");
         get.Value.Tipos.ShouldContain("Autor");
         get.Value.Tipos.ShouldContain("Parceiro");

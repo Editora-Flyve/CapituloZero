@@ -33,6 +33,8 @@ public static class InfrastructureRegistrar
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        // Time provider integration
+        services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         services.AddTransient<IDomainEventsDispatcher, DomainEventsDispatcher>();

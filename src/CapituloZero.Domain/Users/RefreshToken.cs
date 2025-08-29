@@ -1,5 +1,3 @@
-using System;
-
 namespace CapituloZero.Domain.Users
 {
     public class RefreshToken

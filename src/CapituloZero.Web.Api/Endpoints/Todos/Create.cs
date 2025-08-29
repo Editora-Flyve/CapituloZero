@@ -3,7 +3,6 @@ using CapituloZero.Application.Abstractions.Authentication;
 using CapituloZero.Application.Todos.Create;
 using CapituloZero.Domain.Todos;
 using CapituloZero.SharedKernel;
-using CapituloZero.Web.Api.Endpoints;
 using CapituloZero.Web.Api.Extensions;
 using CapituloZero.Web.Api.Infrastructure;
 

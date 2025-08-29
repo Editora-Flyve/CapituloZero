@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using CapituloZero.Infrastructure.Authorization;
 using CapituloZero.Infrastructure.Database;
-using CapituloZero.Infrastructure.Usuarios;
 using CapituloZero.Infrastructure.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -131,7 +130,7 @@ public class AuthorizationPermissionsTests
     [Fact]
     public async Task Default_User_Has_UsersAccess_Only()
     {
-        using var sp = BuildAuthProvider();
+        await using var sp = BuildAuthProvider();
         var user = await CreateUserWithRolesAsync(sp, "default@test.com");
         var principal = BuildPrincipal(user.Id, UserTypes.Default);
 
@@ -148,7 +147,7 @@ public class AuthorizationPermissionsTests
     [Fact]
     public async Task Autor_Has_AutorAccess_But_Not_ParceiroAccess()
     {
-        using var sp = BuildAuthProvider();
+        await using var sp = BuildAuthProvider();
         var user = await CreateUserWithRolesAsync(sp, "autor@test.com", UserTypes.Autor);
         var principal = BuildPrincipal(user.Id, UserTypes.Default, UserTypes.Autor);
 
@@ -165,7 +164,7 @@ public class AuthorizationPermissionsTests
     [Fact]
     public async Task Parceiro_Has_ParceiroAccess_But_Not_AutorAccess()
     {
-        using var sp = BuildAuthProvider();
+        await using var sp = BuildAuthProvider();
         var user = await CreateUserWithRolesAsync(sp, "parceiro@test.com", UserTypes.Parceiro);
         var principal = BuildPrincipal(user.Id, UserTypes.Default, UserTypes.Parceiro);
 
@@ -184,7 +183,7 @@ public class AuthorizationPermissionsTests
     [Fact]
     public async Task Admin_Has_All_Permissions()
     {
-        using var sp = BuildAuthProvider();
+        await using var sp = BuildAuthProvider();
         var user = await CreateUserWithRolesAsync(sp, "admin@test.com", UserTypes.Admin);
         var principal = BuildPrincipal(user.Id, UserTypes.Default, UserTypes.Admin);
 
@@ -201,7 +200,7 @@ public class AuthorizationPermissionsTests
     [Fact]
     public async Task Parceiro_Does_Not_Have_TerceiroAccess()
     {
-        using var sp = BuildAuthProvider();
+        await using var sp = BuildAuthProvider();
         var user = await CreateUserWithRolesAsync(sp, "parceiro2@test.com", UserTypes.Parceiro);
         var principal = BuildPrincipal(user.Id, UserTypes.Default, UserTypes.Parceiro);
 

@@ -12,30 +12,30 @@ public static class CustomResults
         }
 
         return Results.Problem(
-            title: GetTitle(result.Error),
-            detail: GetDetail(result.Error),
-            type: GetType(result.Error.Type),
-            statusCode: GetStatusCode(result.Error.Type),
+            title: GetTitle(result.ErrorInternal),
+            detail: GetDetail(result.ErrorInternal),
+            type: GetType(result.ErrorInternal.Type),
+            statusCode: GetStatusCode(result.ErrorInternal.Type),
             extensions: GetErrors(result));
 
-        static string GetTitle(Error error) =>
-            error.Type switch
+        static string GetTitle(ErrorInternal errorInternal) =>
+            errorInternal.Type switch
             {
-                ErrorType.Validation => error.Code,
-                ErrorType.Problem => error.Code,
-                ErrorType.NotFound => error.Code,
-                ErrorType.Conflict => error.Code,
+                ErrorType.Validation => errorInternal.Code,
+                ErrorType.Problem => errorInternal.Code,
+                ErrorType.NotFound => errorInternal.Code,
+                ErrorType.Conflict => errorInternal.Code,
                 _ => "Server failure"
             };
 
-        static string GetDetail(Error error) =>
-            error.Type switch
+        static string GetDetail(ErrorInternal errorInternal) =>
+            errorInternal.Type switch
             {
-                ErrorType.Validation => error.Description,
-                ErrorType.Problem => error.Description,
-                ErrorType.NotFound => error.Description,
-                ErrorType.Conflict => error.Description,
-                _ => "An unexpected error occurred"
+                ErrorType.Validation => errorInternal.Description,
+                ErrorType.Problem => errorInternal.Description,
+                ErrorType.NotFound => errorInternal.Description,
+                ErrorType.Conflict => errorInternal.Description,
+                _ => "An unexpected errorInternal occurred"
             };
 
         static string GetType(ErrorType errorType) =>
@@ -59,7 +59,7 @@ public static class CustomResults
 
         static Dictionary<string, object?>? GetErrors(Result result)
         {
-            if (result.Error is not ValidationError validationError)
+            if (result.ErrorInternal is not ValidationErrorInternal validationError)
             {
                 return null;
             }
