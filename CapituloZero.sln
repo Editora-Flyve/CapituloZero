@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.WebApp", "src\CapituloZero.WebApp\CapituloZero.WebApp\CapituloZero.WebApp.csproj", "{F3061C75-F51F-453D-BC9D-4C252DD6BAE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.WebApp", "src\CapituloZero.WebApp\CapituloZero.WebApp.csproj", "{F3061C75-F51F-453D-BC9D-4C252DD6BAE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.WebApp.Client", "src\CapituloZero.WebApp\CapituloZero.WebApp.Client\CapituloZero.WebApp.Client.csproj", "{8411A260-41F6-469C-B3F8-CA83F4235FF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.WebApp.Client", "src\CapituloZero.WebApp.Client\CapituloZero.WebApp.Client.csproj", "{8411A260-41F6-469C-B3F8-CA83F4235FF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
