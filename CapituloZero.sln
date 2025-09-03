@@ -7,6 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.WebApp", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.WebApp.Client", "src\CapituloZero.WebApp.Client\CapituloZero.WebApp.Client.csproj", "{8411A260-41F6-469C-B3F8-CA83F4235FF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.Domain", "src\CapituloZero.Domain\CapituloZero.Domain.csproj", "{2C92148F-590A-4AB5-A848-41BE89E0A657}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.Infra.IdentityApp", "src\CapituloZero.Infra.IdentityApp\CapituloZero.Infra.IdentityApp.csproj", "{FDE4EFD7-6A40-43C1-9D36-E6D79CE2A5B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.AppHost", "src\CapituloZero.AppHost\CapituloZero.AppHost.csproj", "{A8D66F85-F945-46CD-A4F2-BF1974020943}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.ServiceDefaults", "src\CapituloZero.ServiceDefaults\CapituloZero.ServiceDefaults.csproj", "{5A8297B9-1E54-4C23-A6C9-B13FDCA3746F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapituloZero.MigrationService", "src\CapituloZero.MigrationService\CapituloZero.MigrationService.csproj", "{3C1410C6-D994-4B1F-91BA-8DCD95FD3B3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +34,25 @@ Global
 		{8411A260-41F6-469C-B3F8-CA83F4235FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8411A260-41F6-469C-B3F8-CA83F4235FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8411A260-41F6-469C-B3F8-CA83F4235FF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C92148F-590A-4AB5-A848-41BE89E0A657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C92148F-590A-4AB5-A848-41BE89E0A657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C92148F-590A-4AB5-A848-41BE89E0A657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C92148F-590A-4AB5-A848-41BE89E0A657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDE4EFD7-6A40-43C1-9D36-E6D79CE2A5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDE4EFD7-6A40-43C1-9D36-E6D79CE2A5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDE4EFD7-6A40-43C1-9D36-E6D79CE2A5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDE4EFD7-6A40-43C1-9D36-E6D79CE2A5B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8D66F85-F945-46CD-A4F2-BF1974020943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D66F85-F945-46CD-A4F2-BF1974020943}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D66F85-F945-46CD-A4F2-BF1974020943}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8D66F85-F945-46CD-A4F2-BF1974020943}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A8297B9-1E54-4C23-A6C9-B13FDCA3746F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8297B9-1E54-4C23-A6C9-B13FDCA3746F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8297B9-1E54-4C23-A6C9-B13FDCA3746F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8297B9-1E54-4C23-A6C9-B13FDCA3746F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C1410C6-D994-4B1F-91BA-8DCD95FD3B3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C1410C6-D994-4B1F-91BA-8DCD95FD3B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C1410C6-D994-4B1F-91BA-8DCD95FD3B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C1410C6-D994-4B1F-91BA-8DCD95FD3B3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -7,18 +7,17 @@
         <UserSecretsId>aspnet-CapituloZero.WebApp-6a99de77-7ca6-43b2-a6ee-177e3c2ead36</UserSecretsId>
     </PropertyGroup>
 
-    <ItemGroup>
-        <None Update="Data\app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
-    </ItemGroup>
-
 
     <ItemGroup>
+        <ProjectReference Include="..\CapituloZero.ServiceDefaults\CapituloZero.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\CapituloZero.Infra.IdentityApp\CapituloZero.Infra.IdentityApp.csproj" />
         <ProjectReference Include="..\CapituloZero.WebApp.Client\CapituloZero.WebApp.Client.csproj"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.*"/>
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.*"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.*"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.*"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.*"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Extensions.MudBlazor.StaticInput" Version="3.*"/>
     </ItemGroup>
 

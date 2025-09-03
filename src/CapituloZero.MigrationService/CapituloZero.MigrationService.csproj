@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-CapituloZero.MigrationService-54a1c150-1d90-4722-a4a2-0cba212a6049</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.4.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CapituloZero.ServiceDefaults\CapituloZero.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\CapituloZero.Infra.IdentityApp\CapituloZero.Infra.IdentityApp.csproj" />
+    </ItemGroup>
+</Project>
