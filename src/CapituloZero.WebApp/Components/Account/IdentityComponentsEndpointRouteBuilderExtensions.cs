@@ -3,6 +3,7 @@ using System.Text.Json;
 using CapituloZero.Infra.IdentityApp;
 using CapituloZero.WebApp.Components.Account.Pages;
 using CapituloZero.WebApp.Components.Account.Pages.Manage;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -18,9 +19,28 @@ namespace CapituloZero.WebApp.Components.Account
         public static IEndpointConventionBuilder MapAdditionalIdentityEndpoints(this IEndpointRouteBuilder endpoints)
         {
             ArgumentNullException.ThrowIfNull(endpoints);
-
+            
+            endpoints.MapGet("/antiforgery", (IAntiforgery af, HttpContext ctx) =>
+            {
+                var tokens = af.GetAndStoreTokens(ctx);
+                return Results.Ok(new { token = tokens.RequestToken });
+            });
+            
             var accountGroup = endpoints.MapGroup("/Account");
 
+            accountGroup.MapGet("/UserRoles", async (
+                HttpContext context,
+                [FromServices] UserManager<ApplicationUser> userManager
+                ) =>
+            {
+                if(context.User.Identity is null || !context.User.Identity.IsAuthenticated)
+                    return Results.Ok(Array.Empty<string>());
+                
+                var user = await userManager.GetUserAsync(context.User);
+                var roles = await userManager.GetRolesAsync(user);
+                return Results.Ok(roles);
+            });
+            
             accountGroup.MapPost("/PerformExternalLogin", (
                 HttpContext context,
                 [FromServices] SignInManager<ApplicationUser> signInManager,

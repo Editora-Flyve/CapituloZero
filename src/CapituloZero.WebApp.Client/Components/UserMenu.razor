@@ -1,0 +1,90 @@
+@using System.Security.Claims
+@using CapituloZero.WebApp.Client.Components.Models
+@using Microsoft.AspNetCore.Authorization
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@attribute [Authorize]
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true" Class="mt-1 ml-4">
+            <ActivatorContent>
+                <MudIcon Icon="@Icons.Custom.Uncategorized.ChessPawn"/>
+            </ActivatorContent>
+            <ChildContent>
+                <MudCard Elevation="0">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Large">
+                                <MudIcon Icon="@Icons.Custom.Uncategorized.ChessPawn" Size="Size.Large"/>
+                            </MudAvatar>
+                        </CardHeaderAvatar>
+                    </MudCardHeader>
+                </MudCard>
+                <MudListItem T="string" Text="Seu Perfil" Icon="@Icons.Material.Outlined.Person" Href="Account/Manage"/>
+                @foreach (var menu in GetRolesMenus(context.User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray()))
+                {
+                    <MudListItem T="string" Text="@($"App {menu}")" Icon="@Icons.Material.Outlined.Apps"
+                                 Href="@($"/{menu}/")"/>
+                }
+                <MudDivider/>
+                <MudListItem T="string" Text="Logout" Icon="@Icons.Material.Outlined.Logout" @onclick="LogOutAction"/>
+            </ChildContent>
+        </MudMenu>
+    </Authorized>
+    <NotAuthorized>
+        <MudAvatar Color="Color.Primary" Variant="Variant.Outlined">
+            <MudIconButton Icon="@Icons.Material.Filled.Person" Href="Account/Login"/>
+        </MudAvatar>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private async Task LogOutAction()
+    {
+        var resp = await Http.GetFromJsonAsync<AntiForgeryTokenDto>("/antiforgery");
+
+        using var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("ReturnUrl", NavigationManager.ToBaseRelativePath(NavigationManager.Uri)),
+            new KeyValuePair<string, string>("__RequestVerificationToken", resp.token)
+        });
+
+        await Http.PostAsync("/Account/Logout", content);
+
+        NavigationManager.Refresh(true);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Http.BaseAddress ??= new Uri(NavigationManager.BaseUri);
+    }
+
+    private string[] GetRolesMenus(string[] roles)
+    {
+        var menus = new List<string>();
+        if (roles.Contains("Admin"))
+        {
+            menus.Add("Admin");
+            menus.Add("Autor");
+            menus.Add("Parceiro");
+            return menus.ToArray();
+        }
+
+        foreach (var role in roles)
+        {
+            if (role == "Cliente")
+                continue;
+
+            menus.Add(role);
+        }
+
+        return menus.ToArray();
+    }
+
+}
