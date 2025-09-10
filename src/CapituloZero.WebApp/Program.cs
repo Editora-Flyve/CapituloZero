@@ -1,5 +1,6 @@
 using CapituloZero.Infra.IdentityApp;
 using CapituloZero.ServiceDefaults;
+using CapituloZero.WebApp.Client.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ using MudBlazor.Services;
 using CapituloZero.WebApp.Client.Pages;
 using CapituloZero.WebApp.Components;
 using CapituloZero.WebApp.Components.Account;
+using Microsoft.AspNetCore.Components;
+using CapituloZero.WebApp.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +47,18 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+// Provide an HttpClient for interactive server-side components with the same
+// BaseAddress semantics as in WebAssembly (so components don't need to set it manually).
+// This mirrors the registration done in the WASM client Program.cs.
+builder.Services.AddScoped(sp =>
+{
+    var nav = sp.GetRequiredService<NavigationManager>();
+    return new HttpClient { BaseAddress = new Uri(nav.BaseUri) };
+});
+
+// Reutiliza serviços do client (AuthApi, Antiforgery etc.) para componentes server-side
+builder.Services.AddClientAppServices();
 
 var app = builder.Build();
 

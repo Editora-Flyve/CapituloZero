@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using CapituloZero.WebApp.Client.Models;
 
 namespace CapituloZero.WebApp.Components.Account
 {
@@ -87,12 +88,12 @@ namespace CapituloZero.WebApp.Components.Account
                     await af.ValidateRequestAsync(context);
                 }
                 var logger = loggerFactory.CreateLogger("LoginApi");
-                if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+                if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha))
                 {
                     return Results.BadRequest(new { message = "Credenciais inválidas." });
                 }
 
-                var result = await signInManager.PasswordSignInAsync(request.Email, request.Password, request.RememberMe, lockoutOnFailure: false);
+                var result = await signInManager.PasswordSignInAsync(request.Email, request.Senha, request.Lembrar, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     logger.LogInformation("User {Email} logged in via LoginApi", request.Email);
@@ -115,7 +116,7 @@ namespace CapituloZero.WebApp.Components.Account
                 [FromServices] SignInManager<ApplicationUser> signInManager,
                 [FromServices] ILoggerFactory loggerFactory,
                 HttpContext context,
-                [FromBody] RegisterRequest request) =>
+                [FromBody] RegistrarRequest request) =>
             {
                 if (context.Request.Headers.TryGetValue("RequestVerificationToken", out var _))
                 {
@@ -123,7 +124,7 @@ namespace CapituloZero.WebApp.Components.Account
                     await af.ValidateRequestAsync(context);
                 }
                 var logger = loggerFactory.CreateLogger("RegisterApi");
-                if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+                if (string.IsNullOrWhiteSpace(request.Nome) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha))
                 {
                     return Results.BadRequest(new { message = "Campos obrigatórios ausentes." });
                 }
@@ -133,7 +134,7 @@ namespace CapituloZero.WebApp.Components.Account
                     UserName = request.Email,
                     Email = request.Email
                 };
-                var result = await userManager.CreateAsync(user, request.Password);
+                var result = await userManager.CreateAsync(user, request.Senha);
                 if (result.Succeeded)
                 {
                     logger.LogInformation("User {Email} registered via RegisterApi", request.Email);
@@ -208,8 +209,5 @@ namespace CapituloZero.WebApp.Components.Account
 
             return accountGroup;
         }
-
-    private sealed record LoginRequest(string Email, string Password, bool RememberMe);
-    private sealed record RegisterRequest(string Name, string Email, string Password);
     }
 }

@@ -1,0 +1,81 @@
+@page "/Cadastro"
+@using CapituloZero.WebApp.Client.Pages.Shared.Models
+@using CapituloZero.WebApp.Client.Pages.Shared.Validator
+@using System.Net.Http.Json
+@using CapituloZero.WebApp.Client.Abstract
+@using CapituloZero.WebApp.Client.Models
+@using CapituloZero.WebApp.Client.Services
+@inherits CapituloZero.WebApp.Client.Components.Base.AuthComponentBase
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex justify-center" Style="min-height:80vh">
+	<MudPaper Class="pa-8" Elevation="0" Style="width:100%;max-width:480px;align-self:center;background-color:#1E1E1E;border:1px solid #272727;">
+		<MudStack Row="false" Spacing="2">
+			<MudText Typo="Typo.h5" Align="Align.Center" Class="font-weight-bold" Style="letter-spacing:1px">Entre no Ninho</MudText>
+			<MudForm @ref="form" Model="model" Validation="@(_validator.ValidateValue)">
+				<MudTextField T="string" Label="Seu nome" For="@(() => model.Nome)" @bind-Value="model.Nome" Immediate FullWidth Dense Placeholder="Para que possamos saber como te chamar :)" Style="background:#252525" />
+				<MudTextField T="string" Label="Seu melhor e-mail" For="@(() => model.Email)" @bind-Value="model.Email" Immediate FullWidth Dense Class="mt-4" Placeholder="Para você fazer o seu login" Style="background:#252525" />
+				<MudTextField T="string" Label="Sua senha" For="@(() => model.Senha)" @bind-Value="model.Senha" Immediate InputType="InputType.Password" FullWidth Dense Class="mt-4" Placeholder="Crie uma senha" Style="background:#252525" />
+				<MudButton Style="background:#00C853;color:#ffffff;font-weight:600" Variant="Variant.Filled" FullWidth="true" Class="mt-6" Disabled="@IsSubmitting" OnClick="Submit">
+					@if(IsSubmitting){<MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" Color="Color.Inherit" />} Cadastrar-se
+				</MudButton>
+				@if(!string.IsNullOrWhiteSpace(ErrorMessage))
+				{
+					<MudAlert Severity="Severity.Error" Dense Class="mt-4">@ErrorMessage</MudAlert>
+				}
+				@if(successMessage is not null)
+				{
+					<MudAlert Severity="Severity.Success" Dense Class="mt-4">@successMessage</MudAlert>
+				}
+			</MudForm>
+			<MudDivider Class="my-6" />
+			<div class="d-flex justify-center mt-2 mb-1">
+				<img src="/favicon.ico" alt="Flyve" style="width:40px;height:40px;filter:drop-shadow(0 0 2px rgba(0,0,0,.6));" />
+			</div>
+		</MudStack>
+	</MudPaper>
+</MudContainer>
+
+@code {
+	[Inject] private NavigationManager Nav { get; set; } = default!;
+	[Inject] private IAuthApi AuthApi { get; set; } = default!;
+	MudForm form = default!;
+	RegisterModel model = new();
+	RegisterModelValidator _validator = new();
+	// Usar apenas ErrorMessage da classe base
+	string? successMessage;
+
+	protected override Task OnInitializedAsync()
+	{
+		// Nada necessário aqui agora; token buscado on-demand pelo serviço
+		return Task.CompletedTask;
+	}
+
+	private async Task Submit() => await ExecuteSubmitAsync(async () =>
+	{
+		await form.Validate();
+		if(!form.IsValid) return;
+		ErrorMessage = null;
+		successMessage = null;
+		var req = new RegistrarRequest(model.Nome, model.Email, model.Senha);
+		var result = await AuthApi.RegistrarAsync(req);
+		if(!result.Success || result.Data is null)
+		{
+			ErrorMessage = result.ErrorMessage ?? (result.Data?.errors is { Length: >0 } ? string.Join("; ", result.Data.errors) : "Falha ao registrar.");
+			return;
+		}
+		var payload = result.Data;
+		if(payload.success)
+		{
+			successMessage = payload.requiresConfirmation ? "Cadastro realizado! Verifique seu e-mail para confirmar a conta." : "Cadastro realizado! Redirecionando...";
+			if(!payload.requiresConfirmation)
+			{
+				await Task.Delay(1200);
+				Nav.NavigateTo("/", true);
+			}
+		}
+			else
+			{
+				ErrorMessage = payload.errors is { Length: >0 } ? string.Join("; ", payload.errors) : "Não foi possível concluir o cadastro.";
+			}
+	});
+}

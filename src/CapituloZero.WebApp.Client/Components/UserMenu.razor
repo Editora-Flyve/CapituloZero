@@ -1,5 +1,5 @@
 @using System.Security.Claims
-@using CapituloZero.WebApp.Client.Components.Models
+@using CapituloZero.WebApp.Client.Abstract
 @using Microsoft.AspNetCore.Authorization
 
 @inject NavigationManager NavigationManager
@@ -42,25 +42,22 @@
 
 @code {
 
+    [Inject]
+    private IAntiforgeryTokenProvider _antiforgeryTokenProvider { get; set; } = default!;
+    
     private async Task LogOutAction()
     {
-        var resp = await Http.GetFromJsonAsync<AntiForgeryTokenDto>("/antiforgery");
+        var antiforgeryToken = await _antiforgeryTokenProvider.GetTokenAsync();
 
         using var content = new FormUrlEncodedContent(new[]
         {
             new KeyValuePair<string, string>("ReturnUrl", NavigationManager.ToBaseRelativePath(NavigationManager.Uri)),
-            new KeyValuePair<string, string>("__RequestVerificationToken", resp.token)
+            new KeyValuePair<string, string>("__RequestVerificationToken", antiforgeryToken)
         });
 
         await Http.PostAsync("/Account/Logout", content);
 
         NavigationManager.Refresh(true);
-    }
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        Http.BaseAddress ??= new Uri(NavigationManager.BaseUri);
     }
 
     private string[] GetRolesMenus(string[] roles)
