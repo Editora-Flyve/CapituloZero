@@ -1,0 +1,12 @@
+<MudTextField @bind-Value="SearchText" 
+              Label="Pesquise seu livro aqui." 
+              Variant="Variant.Text"
+              Adornment="Adornment.End" 
+              AdornmentIcon="@Icons.Material.Outlined.Search"
+              Clearable="true"
+              color="Color.Primary"
+              />
+
+@code {
+    string SearchText = string.Empty;
+}

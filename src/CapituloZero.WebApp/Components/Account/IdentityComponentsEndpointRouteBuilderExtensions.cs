@@ -37,6 +37,8 @@ namespace CapituloZero.WebApp.Components.Account
                     return Results.Ok(Array.Empty<string>());
                 
                 var user = await userManager.GetUserAsync(context.User);
+                if (user is null)
+                    return Results.Ok(Array.Empty<string>());
                 var roles = await userManager.GetRolesAsync(user);
                 return Results.Ok(roles);
             });
@@ -69,6 +71,80 @@ namespace CapituloZero.WebApp.Components.Account
             {
                 await signInManager.SignOutAsync();
                 return TypedResults.LocalRedirect($"~/{returnUrl}");
+            });
+
+            // Simple JSON login endpoint for WASM client component.
+            accountGroup.MapPost("/LoginApi", async (
+                [FromServices] SignInManager<ApplicationUser> signInManager,
+                [FromServices] ILoggerFactory loggerFactory,
+                HttpContext context,
+                [FromBody] LoginRequest request) =>
+            {
+                // Opcional: validar antiforgery se header presente
+                if (context.Request.Headers.TryGetValue("RequestVerificationToken", out var _))
+                {
+                    var af = context.RequestServices.GetRequiredService<IAntiforgery>();
+                    await af.ValidateRequestAsync(context);
+                }
+                var logger = loggerFactory.CreateLogger("LoginApi");
+                if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+                {
+                    return Results.BadRequest(new { message = "Credenciais inválidas." });
+                }
+
+                var result = await signInManager.PasswordSignInAsync(request.Email, request.Password, request.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("User {Email} logged in via LoginApi", request.Email);
+                    return Results.Ok(new { success = true });
+                }
+                if (result.RequiresTwoFactor)
+                {
+                    return Results.Ok(new { success = false, requiresTwoFactor = true });
+                }
+                if (result.IsLockedOut)
+                {
+                    return Results.Ok(new { success = false, lockedOut = true });
+                }
+
+                return Results.Ok(new { success = false, message = "Tentativa de login inválida." });
+            });
+
+            accountGroup.MapPost("/RegisterApi", async (
+                [FromServices] UserManager<ApplicationUser> userManager,
+                [FromServices] SignInManager<ApplicationUser> signInManager,
+                [FromServices] ILoggerFactory loggerFactory,
+                HttpContext context,
+                [FromBody] RegisterRequest request) =>
+            {
+                if (context.Request.Headers.TryGetValue("RequestVerificationToken", out var _))
+                {
+                    var af = context.RequestServices.GetRequiredService<IAntiforgery>();
+                    await af.ValidateRequestAsync(context);
+                }
+                var logger = loggerFactory.CreateLogger("RegisterApi");
+                if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+                {
+                    return Results.BadRequest(new { message = "Campos obrigatórios ausentes." });
+                }
+
+                var user = new ApplicationUser
+                {
+                    UserName = request.Email,
+                    Email = request.Email
+                };
+                var result = await userManager.CreateAsync(user, request.Password);
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("User {Email} registered via RegisterApi", request.Email);
+                    var requiresConfirmation = userManager.Options.SignIn.RequireConfirmedAccount;
+                    if (!requiresConfirmation)
+                    {
+                        await signInManager.SignInAsync(user, isPersistent: false);
+                    }
+                    return Results.Ok(new { success = true, requiresConfirmation });
+                }
+                return Results.Ok(new { success = false, errors = result.Errors.Select(e => e.Description).ToArray() });
             });
 
             var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
@@ -132,5 +208,8 @@ namespace CapituloZero.WebApp.Components.Account
 
             return accountGroup;
         }
+
+    private sealed record LoginRequest(string Email, string Password, bool RememberMe);
+    private sealed record RegisterRequest(string Name, string Email, string Password);
     }
 }

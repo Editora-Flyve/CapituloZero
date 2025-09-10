@@ -21,4 +21,11 @@
         <PackageReference Include="Extensions.MudBlazor.StaticInput" Version="3.*"/>
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Content Update="wwwroot\Images\logo flyve.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

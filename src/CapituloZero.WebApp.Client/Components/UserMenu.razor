@@ -10,9 +10,9 @@
 
 <AuthorizeView>
     <Authorized>
-        <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true" Class="mt-1 ml-4">
+        <MudMenu Direction="Direction.Left" OffsetX="true" Dense="true">
             <ActivatorContent>
-                <MudIcon Icon="@Icons.Custom.Uncategorized.ChessPawn"/>
+                <MudIcon Icon="@Icons.Custom.Uncategorized.ChessPawn" Size="Size.Large" />
             </ActivatorContent>
             <ChildContent>
                 <MudCard Elevation="0">
@@ -36,9 +36,7 @@
         </MudMenu>
     </Authorized>
     <NotAuthorized>
-        <MudAvatar Color="Color.Primary" Variant="Variant.Outlined">
-            <MudIconButton Icon="@Icons.Material.Filled.Person" Href="Account/Login"/>
-        </MudAvatar>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" Size="Size.Large" Href="Login"/>
     </NotAuthorized>
 </AuthorizeView>
 

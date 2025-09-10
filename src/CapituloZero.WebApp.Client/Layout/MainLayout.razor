@@ -1,20 +1,31 @@
 ﻿@using CapituloZero.WebApp.Client.Components
+@using CapituloZero.WebApp.Client.Components.Models
 @inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="@_theme" IsDarkMode="true"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <MudLayout>
-    <MudAppBar Elevation="1">
-        <MudStaticNavDrawerToggle DrawerId="nav-drawer" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"/>
-        <MudText Typo="Typo.h5" Class="ml-3">Flyve</MudText>
-        <MudSpacer/>
-        <UserMenu/>
+    <MudAppBar Elevation="0">
+        <MudGrid Spacing="20" Justify="Justify.SpaceBetween">
+            <MudItem xs="3">
+                <SearchBook/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudLink Href="/">
+                    <MudImage Src="images/logo flyve.png" Alt="Flyve Logo" Width="144" Height="50" Class="ml-3"/>
+                </MudLink>
+            </MudItem>
+            <MudItem xs="3">
+                <MudGrid Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudItem xs="2">
+                        <UserMenu/>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
     </MudAppBar>
-    <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu/>
-    </MudDrawer>
     <MudMainContent Class="pt-16 pa-4">
         @Body
     </MudMainContent>
@@ -22,11 +33,59 @@
 
 
 <div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
+    Ocorreu algum erro
+    <a href="." class="reload">Recarregar a pagina</a>
     <span class="dismiss">🗙</span>
 </div>
 
 @code {
+
     private bool _drawerOpen = true;
+    private MudTheme? _theme = null;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _theme = new()
+        {
+            PaletteDark = _flyveDarkPalette,
+            LayoutProperties = new LayoutProperties()
+        };
+    }
+
+    private readonly PaletteDark _flyveDarkPalette = new()
+    {
+        // Cores aproximadas ao site Flyve (print):
+        // App bar vermelho forte, fundo preto grafite, cards cinza escuro, botões vermelho e verde (success)
+        Primary = "#C80000", // vermelho institucional na AppBar e elementos primários
+        PrimaryDarken = "#A40000",
+        PrimaryLighten = "#FF2F2F", // tom usado no botão Entrar (mais vibrante)
+        Secondary = "#FFFFFF", // textos/apoiadores contrastantes
+        AppbarBackground = "#C80000",
+        AppbarText = "#FFFFFF",
+        Background = "#111111",
+        BackgroundGray = "#181818",
+        Surface = "#1E1E1E", // painel de login
+        DrawerBackground = "#1A1A1A",
+        DrawerText = "#CCCCCC",
+        DrawerIcon = "#B5B5B5",
+        TextPrimary = "#E0E0E0",
+        TextSecondary = "#B0B0B0",
+        TextDisabled = "#666666",
+        ActionDefault = "#888888",
+        ActionDisabled = "#444444",
+        ActionDisabledBackground = "#2A2A2A",
+        Info = "#4A86FF",
+        Success = "#00C853", // botão Cadastrar-se
+        Warning = "#FFB545",
+        Error = "#FF3F5F",
+        GrayLight = "#2A2A2A",
+        GrayLighter = "#252525", // campos de entrada
+        LinesDefault = "#2F2F2F",
+        TableLines = "#2F2F2F",
+        Divider = "#272727",
+        OverlayLight = "#1E1E1EB3",
+    };
+
 }

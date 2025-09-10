@@ -1,0 +1,154 @@
+@page "/Login"
+@using CapituloZero.WebApp.Client.Pages.Shared.Models
+@using CapituloZero.WebApp.Client.Pages.Shared.Validator
+@using System.Net.Http.Json
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="d-flex justify-center align-center" Style="min-height:70vh">
+            <MudAlert Severity="Severity.Info">Você já está logado.</MudAlert>
+        </MudContainer>
+    </Authorized>
+    <NotAuthorized>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex justify-center" Style="min-height:80vh">
+            <MudPaper Class="pa-8" Elevation="0" Style="width:100%;max-width:440px;align-self:center;background-color:#1E1E1E;border:1px solid #272727;">
+                <MudStack Row="false" Spacing="2">
+                    <MudText Typo="Typo.h5" Align="Align.Center" Class="font-weight-bold text-uppercase" Style="letter-spacing:1px">Bem-vindo de volta!</MudText>
+                    <MudForm @ref="form" Model="model" Validation="@(_loginModelValidator.ValidateValue)" >
+                        <MudTextField T="string" Label="E-mail" For="@(() => model.Email)" @bind-Value="model.Email" Immediate="true" FullWidth="true" Dense="true" Placeholder="Ex: joao@email.com"  Style="background:#252525" />
+                        <MudTextField T="string" Label="Senha" For="@(() => model.Senha)" @bind-Value="model.Senha" Immediate="true" InputType="InputType.Password" FullWidth="true" Dense="true" Class="mt-4" Placeholder="••••••" Style="background:#252525" />
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mt-2">
+                            <MudCheckBox T="bool" @bind-Checked="rememberMe" Label="Lembrar" />
+                            <MudLink Href="/Account/ForgotPassword" Class="text-no-decoration">Esqueci a senha</MudLink>
+                        </MudStack>
+                        <MudButton Style="background:#FF2F2F;color:#ffffff;font-weight:600" Variant="Variant.Filled" FullWidth="true" Class="mt-6" Disabled="@_isSubmitting" OnClick="Submit">
+                            @if(_isSubmitting){<MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" Color="Color.Inherit" />} Entrar
+                        </MudButton>
+                        <MudButton Href="Cadastro" Style="background:#00C853;color:#ffffff;font-weight:600" Variant="Variant.Filled" FullWidth="true" Class="mt-3">
+                            Cadastrar-se
+                        </MudButton>
+                        @if(!string.IsNullOrWhiteSpace(errorMessage))
+                        {
+                            <MudAlert Severity="Severity.Error" Dense="true" Class="mt-4">@errorMessage</MudAlert>
+                        }
+                        @if(showTwoFactor)
+                        {
+                            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-4">Autenticação de dois fatores necessária.</MudAlert>
+                        }
+                        @if(isLockedOut)
+                        {
+                            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-4">Conta bloqueada temporariamente.</MudAlert>
+                        }
+                    </MudForm>
+                    <MudDivider Class="my-6" />
+                    <div class="d-flex justify-center mt-2 mb-1">
+                        <img src="/favicon.ico" alt="Flyve" style="width:40px;height:40px;filter:drop-shadow(0 0 2px rgba(0,0,0,.6));" />
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudContainer>
+    </NotAuthorized>
+    <Authorizing>
+        <MudContainer Class="d-flex justify-center align-center" Style="min-height:70vh">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            <MudText Class="ms-4" Typo="Typo.h6">Validando sessão...</MudText>
+        </MudContainer>
+    </Authorizing>
+</AuthorizeView>
+
+
+@code {
+    [Inject] private HttpClient Http { get; set; } = default!;
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    MudForm form = default!;
+    LoginModel model = new();
+    LoginModelValidator _loginModelValidator = new();
+    bool rememberMe = true;
+    bool _isSubmitting = false;
+    string? errorMessage;
+    bool showTwoFactor;
+    bool isLockedOut;
+    string? _antiForgeryToken;
+    protected override async Task OnInitializedAsync()
+    {
+        Http.BaseAddress ??= new Uri(Nav.BaseUri);
+        await EnsureAntiforgeryTokenAsync();
+    }
+
+    private async Task EnsureAntiforgeryTokenAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(_antiForgeryToken)) return;
+        try
+        {
+            var anti = await Http.GetFromJsonAsync<AntiforgeryResponse>("/antiforgery");
+            _antiForgeryToken = anti?.token;
+        }
+        catch
+        {
+            // Ignorar; tratamos ausência ao tentar enviar
+        }
+    }
+    private async Task Submit()
+    {
+        if (_isSubmitting) return;
+        errorMessage = null;
+        showTwoFactor = false;
+        isLockedOut = false;
+        await form.Validate();
+        if(!form.IsValid) return;
+        _isSubmitting = true;
+        try
+        {
+            await EnsureAntiforgeryTokenAsync();
+            var payloadObj = new LoginApiRequest(model.Email, model.Senha, rememberMe);
+            var req = new HttpRequestMessage(HttpMethod.Post, "/Account/LoginApi")
+            {
+                Content = JsonContent.Create(payloadObj)
+            };
+            if(!string.IsNullOrWhiteSpace(_antiForgeryToken))
+            {
+                req.Headers.Add("RequestVerificationToken", _antiForgeryToken);
+            }
+            var response = await Http.SendAsync(req);
+            if(!response.IsSuccessStatusCode)
+            {
+                errorMessage = "Falha ao realizar login.";
+            }
+            else
+            {
+                var payload = await response.Content.ReadFromJsonAsync<LoginApiResponse>();
+                if(payload is null)
+                {
+                    errorMessage = "Resposta inválida do servidor.";
+                }
+                else if(payload.success)
+                {
+                    Nav.NavigateTo("/", true);
+                }
+                else if(payload.requiresTwoFactor)
+                {
+                    showTwoFactor = true;
+                }
+                else if(payload.lockedOut)
+                {
+                    isLockedOut = true;
+                }
+                else
+                {
+                    errorMessage = payload.message ?? "Credenciais inválidas.";
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private record LoginApiRequest(string Email, string Password, bool RememberMe);
+    private record LoginApiResponse(bool success, bool requiresTwoFactor, bool lockedOut, string? message);
+    private record AntiforgeryResponse(string token);
+}
